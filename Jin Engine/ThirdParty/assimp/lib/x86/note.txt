@@ -1,0 +1,3 @@
+must copy the .dll to the folder in which the .exe resides
+go to build folder of assimp and look for .sln file
+build the solution and look in the ouptput window for where the .lib and .dll files go and copy them here and put the dll in the folder where the projects exe resides (Debug/Release in top level folder)

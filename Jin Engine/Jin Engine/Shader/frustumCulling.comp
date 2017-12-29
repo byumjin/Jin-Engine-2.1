@@ -1,0 +1,110 @@
+#version 450
+#extension GL_ARB_separate_shader_objects : enable
+
+#define WORKGROUP_X_SIZE_MAX 32
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+struct BoundingBox
+{
+	vec4 Center;            // Center of the box.
+	vec4 Extents;           // Distance from the center to each side.
+
+	vec4 minPt;
+	vec4 maxPt;
+
+	vec4 corners[8];
+	vec4 cullingInfo;
+
+	//float radius;
+};
+
+// Read/write format is flexible
+layout(set = 0, binding = 0) buffer AABBs {
+ 	 BoundingBox AABB[];
+};
+
+layout(set = 0, binding = 1) uniform frustumInfoBuffer
+{
+	vec4 planes[6];
+};
+
+layout(set = 0, binding = 2) uniform objectBuffer
+{
+	mat4 modelMat;
+	mat4 InvTransposeMat;
+};
+
+layout(set = 0, binding = 3) uniform cameraBuffer
+{
+	mat4 viewMat;
+	mat4 projMat;
+	mat4 viewProjMat;
+	mat4 InvViewProjMat;
+
+	vec4 cameraWorldPos;
+};
+
+BoundingBox getViewAABB(mat4 modelView, BoundingBox refBox)
+{
+	BoundingBox viewBox;
+		
+	viewBox.maxPt = viewBox.minPt = modelView * vec4(vec3(refBox.corners[0]), 1.0);
+
+	for (uint i = 1; i < 8; ++i)
+	{
+		vec4 viewCorner = modelView * vec4(vec3(refBox.corners[i]), 1.0);
+		viewBox.maxPt = max(viewCorner, viewBox.maxPt);
+		viewBox.minPt = min(viewCorner, viewBox.minPt);
+	}
+
+	viewBox.Center = (viewBox.maxPt + viewBox.minPt) * 0.5f;
+	viewBox.Extents = abs(viewBox.maxPt - viewBox.minPt) * 0.5f;
+
+	return viewBox;
+}
+
+
+void main() {
+
+	uint index = gl_GlobalInvocationID.x;
+
+	BoundingBox thisAABB = AABB[index];
+
+	BoundingBox viewAABB = getViewAABB(modelMat * viewMat, thisAABB);
+
+	for (uint i = 0; i < 6; i++)
+	{
+		vec4 positivePoint = viewAABB.minPt;
+		vec4 negativePoint = viewAABB.maxPt;
+
+		if (planes[i].x >= 0.0)
+		{
+			positivePoint.x = viewAABB.maxPt.x;
+			negativePoint.x = viewAABB.minPt.x;
+		}
+		if (planes[i].y >= 0.0)
+		{
+			positivePoint.y = viewAABB.maxPt.y;
+			negativePoint.y = viewAABB.minPt.y;
+		}
+		if (planes[i].z >= 0.0)
+		{
+			positivePoint.z = viewAABB.maxPt.z;
+			negativePoint.z = viewAABB.minPt.z;
+		}
+
+		// is the positive vertex outside?			
+		if (dot(vec3(positivePoint), vec3(planes[i])) + planes[i].w < 0.0)
+		{
+			thisAABB.cullingInfo.x = 0.0;
+			AABB[index] = thisAABB;
+			return;
+		}
+	}
+
+	thisAABB.cullingInfo.x = 1.0;
+	AABB[index] = thisAABB;
+	
+}
+ 
