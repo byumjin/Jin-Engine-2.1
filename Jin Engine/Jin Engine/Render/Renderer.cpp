@@ -64,7 +64,7 @@ void Renderer::createSwapChain()
 	swapChainExtent = extent;
 }
 
-void Renderer::assignRenderpassID(Material* pMat, VkRenderPass renderPass)
+void Renderer::assignRenderpassID(Material* pMat, VkRenderPass renderPass, uint32_t postProcessIndex)
 {
 	if (renderPass == gbufferRenderPass)
 	{
@@ -73,6 +73,10 @@ void Renderer::assignRenderpassID(Material* pMat, VkRenderPass renderPass)
 	else if (renderPass == mainRenderPass)
 	{
 		pMat->renderPassID = RenderPassID::MAIN;
+	}
+	else
+	{
+		pMat->renderPassID = postProcessIndex + RenderPassID::MAIN + 1;
 	}
 }
 
@@ -88,65 +92,12 @@ VkRenderPass Renderer::getAssignedRenderpassID(Material* pMat)
 	}
 	else
 	{
-		return NULL;
+		return postProcessChain[pMat->renderPassID - RenderPassID::MAIN - 1]->getRenderPass();
 	}
 }
 
-void Renderer::initialize(Vulkan* pVulkanApp)
+void Renderer::setGlobalObjs()
 {
-	interface.initWindow();
-
-	if (pVulkanApp == NULL)
-	{
-		pVulkanApp = new Vulkan;
-		pVulkanApp->initialize(interface);
-	}
-
-	vulkanApp = pVulkanApp;
-	
-	createSemaphores();
-	createQueues();
-
-	createSwapChain();
-	createSwapChainImageViews();	
-
-	createSingleTriangularVertexBuffer();
-
-	createGbufferCommandPool();
-	createFrustumCullingCommandPool();
-
-	createMainCommandPool();	
-
-	createGbuffers();
-
-	depthTexture = new Texture;
-	depthTexture->vulkanApp = vulkanApp;
-
-	createDepthResources();
-
-	createGbufferRenderPass();
-	createMainRenderPass();
-
-	//initialize Resurces
-	AssetDatabase::GetInstance()->setVulkanApp(vulkanApp);
-
-	mainCamera.setCamera(vulkanApp, mainCamera.position, mainCamera.focusPosition, mainCamera.upVector,  45.0f,
-		static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), NEAR_PLANE, FAR_PLANE);
-
-	//FrustumCullingMaterial
-	{
-		FrustumCullingMaterial* frustumCulling_Mat = new FrustumCullingMaterial;
-
-		//frustumCulling_Mat->createLocalBuffer();
-
-		frustumCulling_Mat->createPipeline("frustumCulling", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0),
-			NULL, NULL, NULL);
-
-		pfrustumCullingMaterial = frustumCulling_Mat;// dynamic_cast<FrustumCullingMaterial*>(DBInstance->FindAsset<Material>("frustumCulling"));
-	}
-
-
-	//ObjectMaterial
 	{
 		//sponza
 		{
@@ -278,117 +229,117 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 			//bricks
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.tga", "Asset/Texture/sponza/bricks/bricks_spec.tga", "Asset/Texture/sponza/bricks/bricks_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.tga", "Asset/Texture/sponza/bricks/bricks_spec.tga", "Asset/Texture/sponza/bricks/bricks_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//ceiling
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.tga", "Asset/Texture/sponza/ceiling/ceiling_spec.tga", "Asset/Texture/sponza/ceiling/ceiling_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.tga", "Asset/Texture/sponza/ceiling/ceiling_spec.tga", "Asset/Texture/sponza/ceiling/ceiling_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//chain
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.tga", "Asset/Texture/sponza/chain/chain_spec.tga", "Asset/Texture/sponza/chain/chain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.tga", "Asset/Texture/sponza/chain/chain_spec.tga", "Asset/Texture/sponza/chain/chain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_a
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.tga", "Asset/Texture/sponza/column/column_a_spec.tga", "Asset/Texture/sponza/column/column_a_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.tga", "Asset/Texture/sponza/column/column_a_spec.tga", "Asset/Texture/sponza/column/column_a_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_b
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.tga", "Asset/Texture/sponza/column/column_b_spec.tga", "Asset/Texture/sponza/column/column_b_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.tga", "Asset/Texture/sponza/column/column_b_spec.tga", "Asset/Texture/sponza/column/column_b_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_c
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.tga", "Asset/Texture/sponza/column/column_c_spec.tga", "Asset/Texture/sponza/column/column_c_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.tga", "Asset/Texture/sponza/column/column_c_spec.tga", "Asset/Texture/sponza/column/column_c_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//detail
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.tga", "Asset/Texture/sponza/detail/detail_spec.tga", "Asset/Texture/sponza/detail/detail_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.tga", "Asset/Texture/sponza/detail/detail_spec.tga", "Asset/Texture/sponza/detail/detail_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.tga", "Asset/Texture/sponza/fabric/fabric_blue_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.tga", "Asset/Texture/sponza/fabric/fabric_blue_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.tga", "Asset/Texture/sponza/fabric/fabric_green_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.tga", "Asset/Texture/sponza/fabric/fabric_green_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.tga", "Asset/Texture/sponza/fabric/fabric_red_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.tga", "Asset/Texture/sponza/fabric/fabric_red_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//flagpole
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.tga", "Asset/Texture/sponza/flagpole/flagpole_spec.tga", "Asset/Texture/sponza/flagpole/flagpole_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.tga", "Asset/Texture/sponza/flagpole/flagpole_spec.tga", "Asset/Texture/sponza/flagpole/flagpole_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//floor
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.tga", "Asset/Texture/sponza/floor/floor_spec.tga", "Asset/Texture/sponza/floor/floor_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.tga", "Asset/Texture/sponza/floor/floor_spec.tga", "Asset/Texture/sponza/floor/floor_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.tga", "Asset/Texture/sponza/lion/lion_spec.tga", "Asset/Texture/sponza/lion/lion_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.tga", "Asset/Texture/sponza/lion/lion_spec.tga", "Asset/Texture/sponza/lion/lion_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion_back
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.tga", "Asset/Texture/sponza/lion_background/lion_background_spec.tga", "Asset/Texture/sponza/lion_background/lion_background_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.tga", "Asset/Texture/sponza/lion_background/lion_background_spec.tga", "Asset/Texture/sponza/lion_background/lion_background_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//plant
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.tga", "Asset/Texture/sponza/plant/vase_plant_spec.tga", "Asset/Texture/sponza/plant/vase_plant_norm.tga", "Asset/Texture/sponza/plant/vase_plant_emiss.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.tga", "Asset/Texture/sponza/plant/vase_plant_spec.tga", "Asset/Texture/sponza/plant/vase_plant_norm.tga", "Asset/Texture/sponza/plant/vase_plant_emiss.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//roof
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.tga", "Asset/Texture/sponza/roof/roof_spec.tga", "Asset/Texture/sponza/roof/roof_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.tga", "Asset/Texture/sponza/roof/roof_spec.tga", "Asset/Texture/sponza/roof/roof_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//thorn
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga", "Asset/Texture/sponza/thorn/sponza_thorn_spec.tga", "Asset/Texture/sponza/thorn/sponza_thorn_norm.tga", "Asset/Texture/sponza/thorn/sponza_thorn_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga", "Asset/Texture/sponza/thorn/sponza_thorn_spec.tga", "Asset/Texture/sponza/thorn/sponza_thorn_norm.tga", "Asset/Texture/sponza/thorn/sponza_thorn_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.tga", "Asset/Texture/sponza/vase/vase_spec.tga", "Asset/Texture/sponza/vase/vase_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.tga", "Asset/Texture/sponza/vase/vase_spec.tga", "Asset/Texture/sponza/vase/vase_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_hanging
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_round
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			sponza->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("curtain_red")); //missing 1
@@ -447,7 +398,7 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
 			temp_Gbuffer_Mat->createPipeline("Cerberus", "Asset/Texture/Cerberus/Cerberus_A.tga", "Asset/Texture/Cerberus/Cerberus_S.tga",
 				"Asset/Texture/Cerberus/Cerberus_N.tga", "Asset/Texture/Cerberus/Cerberus_E.tga",
-				&cerberus->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+				&cerberus->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			cerberus->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("Cerberus"));
@@ -458,7 +409,7 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		//Chromie
 		{
 			Object *Chromie = new Object;
-			Chromie->initialize(vulkanApp, "Chromie", "Asset/Object/Chromie.obj", true);	
+			Chromie->initialize(vulkanApp, "Chromie", "Asset/Object/Chromie.obj", true);
 			Chromie->scale = glm::vec3(0.1f);
 			Chromie->position = glm::vec3(0.0f, 0.0f, 0.0f);
 			Chromie->updateOrbit(0.0f, 85.0f, 0.0);
@@ -478,15 +429,18 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
 			temp_Gbuffer_Mat->createPipeline("Chromie", "Asset/Texture/storm_hero_chromie_ultimate_diff.tga", "Asset/Texture/storm_hero_chromie_ultimate_spec.tga",
 				"Asset/Texture/storm_hero_chromie_ultimate_norm.tga", "Asset/Texture/storm_hero_chromie_ultimate_emis.tga",
-				&Chromie->uniformObjectBuffer, &mainCamera.uniformCameraBuffer,NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+				&Chromie->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			Chromie->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("Chromie"));
 
 			AssetDatabase::GetInstance()->objectManager.push_back(Chromie);
-		}	
+		}
 	}
+}
 
+void Renderer::setGlobalLights()
+{
 	PointLight *pPoint01 = new PointLight;
 
 	pPoint01->lightInfo.color = glm::vec4(1.0, 1.0, 1.0, 1.0);
@@ -495,7 +449,7 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	pPoint01->lightInfo.worldPos = glm::vec4(pPoint01->position, 1.0);
 
 	pointLights.push_back(pPoint01);
-	
+
 	pointLightInfo.push_back(pPoint01->lightInfo);
 
 
@@ -591,11 +545,13 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 	pointLights.push_back(pPoint09);
 	pointLightInfo.push_back(pPoint09->lightInfo);
-	
+
 	createPointLightBuffer();
 
 	//Sky System
-	skySystem.sun.updateOrbit(90.0f, 0.0f, 0.0);
+	directionalLights.clear();
+
+	//skySystem.sun.updateOrbit(90.0f, 0.0f, 0.0);
 	skySystem.sun.lightInfo.color = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	skySystem.sun.lightInfo.direction = skySystem.sun.getViewVector4();
 
@@ -603,14 +559,127 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	directionalLightInfo.push_back(skySystem.sun.lightInfo);
 
 	createDirectionalLightBuffer();
+}
+
+void Renderer::initialize(Vulkan* pVulkanApp)
+{
+	interface.initWindow();
+
+	if (pVulkanApp == NULL)
+	{
+		pVulkanApp = new Vulkan;
+		pVulkanApp->initialize(interface);
+	}
+
+	vulkanApp = pVulkanApp;
+	
+	createSemaphores();
+	createQueues();
+
+	createSwapChain();
+	createSwapChainImageViews();	
+
+	createSingleTriangularVertexBuffer();
+
+	createGbufferCommandPool();
+	createFrustumCullingCommandPool();
+
+	createMainCommandPool();	
+
+	createGbuffers();
+
+	depthTexture = new Texture;
+	depthTexture->vulkanApp = vulkanApp;
+
+	createDepthResources();
+
+	createGbufferRenderPass();
+	createMainRenderPass();
+
+	//initialize Resurces
+	AssetDatabase::GetInstance()->setVulkanApp(vulkanApp);
+
+	mainCamera.setCamera(vulkanApp, mainCamera.position, mainCamera.focusPosition, mainCamera.upVector,  45.0f,
+		static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), NEAR_PLANE, FAR_PLANE);
+
+	//FrustumCullingMaterial
+	{
+		FrustumCullingMaterial* frustumCulling_Mat = new FrustumCullingMaterial;
+
+		//frustumCulling_Mat->createLocalBuffer();
+
+		frustumCulling_Mat->createPipeline("frustumCulling", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0),
+			NULL, NULL, NULL);
+
+		pfrustumCullingMaterial = frustumCulling_Mat;// dynamic_cast<FrustumCullingMaterial*>(DBInstance->FindAsset<Material>("frustumCulling"));
+	}
+
+	setGlobalObjs();
+	setGlobalLights();	
 
 	//PBR material
 	{
 		UberMaterial* temp_uber_Mat = new UberMaterial;
+
+		
+		PostProcess *PBR_PP = new PostProcess(vulkanApp, "uber_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer);
+		PBR_PP->initialize(swapChainExtent);
+
 		temp_uber_Mat->createPipeline("uber_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
 			&pointLightUniformBuffer, pointLightInfo.size(),&directionalLightUniformBuffer, directionalLightInfo.size(),
-			glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0), mainRenderPass, &gbuffers, depthTexture);
-		assignRenderpassID(temp_uber_Mat, mainRenderPass);
+			glm::vec2(0.0), glm::vec4(PBR_PP->getExtent().width, PBR_PP->getExtent().height, 1.0, 1.0), PBR_PP->getRenderPass(), &gbuffers, depthTexture);
+		assignRenderpassID(temp_uber_Mat, PBR_PP->getRenderPass(), postProcessChain.size());
+
+		PBR_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(PBR_PP);
+	}
+
+	//SkyRendering material
+	{
+		SkyRenderingMaterial* temp_sky_Mat = new SkyRenderingMaterial;
+
+
+		PostProcess *SKY_PP = new PostProcess(vulkanApp, "SkyRendering_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer);
+		SKY_PP->initialize(swapChainExtent);
+
+		temp_sky_Mat->createPipeline("SkyRendering_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(),
+			glm::vec2(0.0), glm::vec4(SKY_PP->getExtent().width, SKY_PP->getExtent().height, 1.0, 1.0), SKY_PP->getRenderPass(), &postProcessChain[postProcessChain.size() - 1]->renderTargets, NULL);
+		assignRenderpassID(temp_sky_Mat, SKY_PP->getRenderPass(), postProcessChain.size());
+
+		SKY_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(SKY_PP);
+	}
+
+	//ToneMapping material
+	{
+		ToneMappingMaterial* temp_tone_Mat = new ToneMappingMaterial;
+
+		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! VK_FORMAT_R16G16B16A16_SFLOAT
+		PostProcess *tone_PP = new PostProcess(vulkanApp, "tonemapping_mat", swapChainImageFormat, 1, singleTriangularVertexBuffer);
+		tone_PP->initialize(swapChainExtent);
+
+
+		temp_tone_Mat->createPipeline("tonemapping_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(),
+			glm::vec2(0.0), glm::vec4(tone_PP->getExtent().width, tone_PP->getExtent().height, 1.0, 1.0), tone_PP->getRenderPass(), &postProcessChain[postProcessChain.size() - 1]->renderTargets, NULL);
+		assignRenderpassID(temp_tone_Mat, tone_PP->getRenderPass(), postProcessChain.size());
+
+		tone_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(tone_PP);
+	}
+
+	//Present material
+	{
+		PresentMaterial* temp_last_Mat = new PresentMaterial;
+
+		temp_last_Mat->createPipeline("present_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(),
+			glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0), mainRenderPass, &postProcessChain[postProcessChain.size()-1]->renderTargets, NULL);
+		assignRenderpassID(temp_last_Mat, mainRenderPass, 0);
 	}
 
 	createGbufferFramebuffers();
@@ -658,6 +727,13 @@ void Renderer::reInitializeRenderer()
 	shutdownDepthResources();
 
 	AssetDatabase::GetInstance()->cleanUp();
+
+	for (size_t i = 0; i < postProcessChain.size(); i++)
+	{
+		postProcessChain[i]->shutDown();
+	}
+
+	postProcessChain.clear();
 
 	deleteSemaphores();
 
@@ -889,9 +965,35 @@ void Renderer::draw(unsigned int deltaTime)
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
+	VkSemaphore *prevSM = &pbrSemaphore;
+	VkSemaphore *currentSM = NULL;	
+	
+	//PostProcess
+	for (size_t i = 0; i < postProcessChain.size(); i++)
+	{
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = prevSM;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &postProcessChain[i]->cmds[0];
+		submitInfo.signalSemaphoreCount = 1;
+
+		currentSM = postProcessChain[i]->getFirstSM();
+
+		submitInfo.pSignalSemaphores = currentSM;
+
+		if (vkQueueSubmit(postProcessChain[i]->getFirstQueue(), 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to submit draw command buffer!");
+		}
+
+		prevSM = currentSM;
+	}
+
+
 	//frameQueue
 	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = &pbrSemaphore;
+	submitInfo.pWaitSemaphores = prevSM;
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &mainCmd[imageIndex];
@@ -944,10 +1046,7 @@ void Renderer::reCreateRenderer()
 
 	createSwapChain();
 	createSwapChainImageViews();	
-
-	//createGbufferCommandPool();
-	//createMainCommandPool();
-
+	
 	updateGbuffers();
 	createDepthResources();
 
@@ -957,13 +1056,29 @@ void Renderer::reCreateRenderer()
 	//resources
 	mainCamera.updateAspectRatio(static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height));
 
-	//materials
-	for (uint32_t i = 0; i < AssetDatabase::GetInstance()->materialList.size(); i++)
+
+	//postProcess
+	for (size_t i = 0; i < postProcessChain.size(); i++)
 	{
-		Material* pMaterial = AssetDatabase::GetInstance()->FindAsset<Material>(AssetDatabase::GetInstance()->materialList[i]);
+		postProcessChain[i]->initialize(swapChainExtent);
+	}
+
+	AssetDatabase *pAssetDB = AssetDatabase::GetInstance();
+
+	//materials
+	for (uint32_t i = 0; i < pAssetDB->materialList.size(); i++)
+	{
+		Material* pMaterial = pAssetDB->FindAsset<Material>(pAssetDB->materialList[i]);
 		pMaterial->updatePipeline(pMaterial->screenOffset, glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), pMaterial->sizeScale.z, pMaterial->sizeScale.w), getAssignedRenderpassID(pMaterial));
 	}
 
+	//postProcess
+	for (size_t i = 0; i < postProcessChain.size(); i++)
+	{
+		postProcessChain[i]->recordCommandBuffer();
+	}
+
+	
 
 	createGbufferFramebuffers();
 	createMainFramebuffers();
@@ -993,9 +1108,12 @@ void Renderer::shutdownDepthResources()
 
 void Renderer::releaseRenderPart()
 {
-	//releaseDepthResources();
-
 	AssetDatabase::GetInstance()->releaseRenderingPart();
+
+	for (size_t i = 0; i < postProcessChain.size(); i++)
+	{
+		postProcessChain[i]->releaseRenderingPart();
+	}
 
 	for (size_t i = 0; i < gbufferCmd.size(); i++)
 	{
@@ -1026,8 +1144,6 @@ void Renderer::releaseRenderPart()
 	gbufferFramebuffers.clear();
 
 	releaseGbuffers();
-	//deleteGbuffers();
-
 
 	for (size_t i = 0; i < mainCmd.size(); i++)
 	{
@@ -1066,6 +1182,13 @@ void Renderer::shutDown()
 	shutdownDepthResources();
 
 	AssetDatabase::GetInstance()->cleanUp();
+
+	for (size_t i = 0; i < postProcessChain.size(); i++)
+	{
+		postProcessChain[i]->shutDown();
+	}
+
+	postProcessChain.clear();
 
 	deleteSemaphores();		
 
@@ -1415,5 +1538,5 @@ void Renderer::recordMainCommandBuffers()
 	clearValues[0].color = { 0.0f, 0.6f, 0.8f, 0.0f };
 	clearValues[1].depthStencil = { 1.0f, 0 };
 
-	vulkanApp->recordCommandBuffers(&mainCmd, mainCmdPool, &swapChainFramebuffers, "uber_mat", mainRenderPass, swapChainExtent, &clearValues, 0, singleTriangularVertexBuffer, 0, 3, 0, 0, 0);
+	vulkanApp->recordCommandBuffers(&mainCmd, mainCmdPool, &swapChainFramebuffers, "present_mat", mainRenderPass, swapChainExtent, &clearValues, 0, singleTriangularVertexBuffer, 0, 3, 0, 0, 0);
 }

@@ -64,5 +64,5 @@ void main()
 	//outNormal = vec4(fragTangent, outNormal.w);
 
 	outEmissiveColor = texture(emissiveColorTexture, fragUV);
-	outEmissiveColor.w = fragUV.y;
+	outEmissiveColor.w = 1.0;
 }

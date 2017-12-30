@@ -556,7 +556,7 @@ void GbufferMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 si
 }
 
 void GbufferMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-	VkBuffer *pointLightBuffer, uint32_t numPointLight, VkBuffer *directionalLightBuffer, uint32_t numDirectionalLight,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
 	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
 {
 	AssetDatabase::GetInstance()->materialList.push_back(name);
@@ -681,7 +681,7 @@ void FrustumCullingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::
 void FrustumCullingMaterial::createPipeline(std::string name,
 	std::string albedo, std::string specular, std::string normal, std::string emissive,
 	VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-	VkBuffer *pointLightBuffer, uint32_t numPointLight, VkBuffer *directionalLightBuffer, uint32_t numDirectionalLight,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
 	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
 {
 	AssetDatabase::GetInstance()->materialList.push_back(name);
@@ -799,12 +799,12 @@ void UberMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeS
 }
 
 void UberMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-	VkBuffer *pointLightBuffer, uint32_t numPointLight, VkBuffer *directionalLightBuffer, uint32_t numDirectionalLight,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
 	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
 {
 
-	numPointLights = numPointLight;
-	numDirectionalLights = numDirectionalLight;
+	numPointLights = static_cast<uint32_t>(numPointLight);
+	numDirectionalLights = static_cast<uint32_t>(numDirectionalLight);
 
 	AssetDatabase::GetInstance()->materialList.push_back(name);
 	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
@@ -835,6 +835,259 @@ void UberMaterial::createPipeline(std::string name, std::string albedo, std::str
 }
 
 void UberMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+{
+	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+
+void SkyRenderingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam)
+{
+	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
+
+	std::vector<VkDescriptorPoolSize> descPoolSize;
+	descPoolSize.resize(1);
+
+	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[0].descriptorCount = 1;
+
+	createDescriptorPool(descPoolSize);
+
+	std::vector<VkDescriptorSetLayoutBinding> descLayoutBinding;
+	descLayoutBinding.resize(descPoolSize.size());
+
+	createLayoutBinding(descLayoutBinding[0], 0, 1, descPoolSize[0].type, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+	createDescriptorSetLayout(descLayoutBinding);
+
+
+	std::vector<VkDescriptorImageInfo> ImageInfos;
+	ImageInfos.resize(1);
+
+	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+	descriptorSetLayouts.resize(1);
+	descriptorSetLayouts[0] = descriptorSetLayout;
+
+	createDescriptorSet(descriptorSetLayouts);
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descPoolSize.size());
+
+	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr);
+
+	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void SkyRenderingMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
+{
+
+	numPointLights = static_cast<uint32_t>(numPointLight);
+	numDirectionalLights = static_cast<uint32_t>(numDirectionalLight);
+
+	AssetDatabase::GetInstance()->materialList.push_back(name);
+	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
+
+	LoadFromFilename(vulkanApp, name);
+	addTexture((*renderTarget)[0]);
+
+	setShaderPaths("Shader/postProcess.vert.spv", "Shader/sky.frag.spv", "", "", "", "");
+
+	createDescriptor(ScreenOffsets, SizeScale);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+void SkyRenderingMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+{
+	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+
+
+void ToneMappingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam)
+{
+	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
+
+	std::vector<VkDescriptorPoolSize> descPoolSize;
+	descPoolSize.resize(1);
+
+	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[0].descriptorCount = 1;
+
+	createDescriptorPool(descPoolSize);
+
+	std::vector<VkDescriptorSetLayoutBinding> descLayoutBinding;
+	descLayoutBinding.resize(descPoolSize.size());
+
+	createLayoutBinding(descLayoutBinding[0], 0, 1, descPoolSize[0].type, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+	createDescriptorSetLayout(descLayoutBinding);
+
+
+	std::vector<VkDescriptorImageInfo> ImageInfos;
+	ImageInfos.resize(1);
+
+	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+	descriptorSetLayouts.resize(1);
+	descriptorSetLayouts[0] = descriptorSetLayout;
+
+	createDescriptorSet(descriptorSetLayouts);
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descPoolSize.size());
+
+	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr);
+
+	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void ToneMappingMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
+{
+
+	numPointLights = static_cast<uint32_t>(numPointLight);
+	numDirectionalLights = static_cast<uint32_t>(numDirectionalLight);
+
+	AssetDatabase::GetInstance()->materialList.push_back(name);
+	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
+
+	LoadFromFilename(vulkanApp, name);
+	addTexture((*renderTarget)[0]);
+
+	setShaderPaths("Shader/postProcess.vert.spv", "Shader/toneMapping.frag.spv", "", "", "", "");
+
+	createDescriptor(ScreenOffsets, SizeScale);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+void ToneMappingMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+{
+	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void PresentMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam)
+{
+	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
+
+	std::vector<VkDescriptorPoolSize> descPoolSize;
+	descPoolSize.resize(1);
+
+	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[0].descriptorCount = 1;
+
+	createDescriptorPool(descPoolSize);
+
+	std::vector<VkDescriptorSetLayoutBinding> descLayoutBinding;
+	descLayoutBinding.resize(descPoolSize.size());
+
+	createLayoutBinding(descLayoutBinding[0], 0, 1, descPoolSize[0].type, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+	createDescriptorSetLayout(descLayoutBinding);
+
+
+	std::vector<VkDescriptorImageInfo> ImageInfos;
+	ImageInfos.resize(1);
+
+	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+	descriptorSetLayouts.resize(1);
+	descriptorSetLayouts[0] = descriptorSetLayout;
+
+	createDescriptorSet(descriptorSetLayouts);
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descPoolSize.size());
+
+	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr);
+
+	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void PresentMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
+{
+
+	numPointLights = static_cast<uint32_t>(numPointLight);
+	numDirectionalLights = static_cast<uint32_t>(numDirectionalLight);
+
+	AssetDatabase::GetInstance()->materialList.push_back(name);
+	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
+
+	LoadFromFilename(vulkanApp, name);
+	addTexture((*renderTarget)[0]);
+
+	setShaderPaths("Shader/postProcess.vert.spv", "Shader/postProcess.frag.spv", "", "", "", "");
+
+	createDescriptor(ScreenOffsets, SizeScale);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+void PresentMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
 {
 	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
 

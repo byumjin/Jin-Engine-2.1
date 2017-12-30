@@ -1,1 +1,30 @@
-﻿  Jin Engine.vcxproj -> C:\Users\Jin\documents\visual studio 2017\Projects\Jin Engine\x64\Release\Jin Engine.exe
+﻿  Performing Custom Build Tools
+  Shader\postProcess.frag
+  Performing Custom Build Tools
+  Shader\postProcess.vert
+  Performing Custom Build Tools
+  Shader\toneMapping.frag
+  Performing Custom Build Tools
+  Shader\sky.frag
+  Object.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\actor\Object.h(36): warning C4114: same type qualifier used more than once
+Actor\Object.cpp(74): warning C4114: same type qualifier used more than once
+  AssetDB.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\asset\../Actor/Object.h(36): warning C4114: same type qualifier used more than once
+  Material.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\asset\../Actor/Object.h(36): warning C4114: same type qualifier used more than once
+  Vulkan.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\asset\../Actor/Object.h(36): warning C4114: same type qualifier used more than once
+  Renderer.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\render\../Actor/Object.h(36): warning C4114: same type qualifier used more than once
+Render\Renderer.cpp(631): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+Render\Renderer.cpp(649): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+Render\Renderer.cpp(668): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+  main.cpp
+c:\users\byumjin\documents\github\jin-engine-2.1\jin engine\jin engine\render\../Actor/Object.h(36): warning C4114: same type qualifier used more than once
+  Generating code
+  140 of 3896 functions ( 3.6%) were compiled, the rest were copied from previous compilation.
+    115 functions were new in current compilation
+    208 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Jin Engine.vcxproj -> C:\Users\byumjin\Documents\GitHub\Jin-Engine-2.1\Jin Engine\x64\Release\Jin Engine.exe

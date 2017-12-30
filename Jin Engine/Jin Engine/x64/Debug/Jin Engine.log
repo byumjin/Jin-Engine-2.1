@@ -1,32 +1,3 @@
-﻿  Renderer.cpp
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\actor\object.h(36): warning C4114: same type qualifier used more than once
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(143): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(276): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(281): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(286): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(291): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(296): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(301): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(306): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(311): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(316): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(321): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(326): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(331): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(336): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(341): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(346): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(351): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(356): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(361): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(366): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(371): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(376): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(381): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(386): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(391): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(450): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(481): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-c:\users\jin\documents\visual studio 2017\projects\jin engine\jin engine\render\renderer.cpp(612): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-  Jin Engine.vcxproj -> C:\Users\Jin\documents\visual studio 2017\Projects\Jin Engine\x64\Debug\Jin Engine.exe
-  Jin Engine.vcxproj -> C:\Users\Jin\documents\visual studio 2017\Projects\Jin Engine\x64\Debug\Jin Engine.pdb (Partial PDB)
+﻿  Performing Custom Build Tools
+  Shader\sky.frag
+  Jin Engine.vcxproj -> C:\Users\byumjin\Documents\GitHub\Jin-Engine-2.1\Jin Engine\x64\Debug\Jin Engine.exe

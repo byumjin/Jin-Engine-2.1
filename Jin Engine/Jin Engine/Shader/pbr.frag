@@ -177,7 +177,7 @@ void main()
 	}
 
 	resultColor += vec3(EmissiveMap.xyz);	
-	outColor = vec4(resultColor, 1.0);
+	outColor = vec4(resultColor, EmissiveMap.w);
 
 	//outColor = texture(basicGbuffer, fragUV);
     //outColor = (texture(normalGbuffere, fragUV) + vec4(1.0)) * 0.5;

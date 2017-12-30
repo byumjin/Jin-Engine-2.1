@@ -98,7 +98,7 @@ public:
 
 	void reCreateRenderer();
 
-	void assignRenderpassID(Material* pMat, VkRenderPass renderPass);
+	void assignRenderpassID(Material* pMat, VkRenderPass renderPass, uint32_t postProcessIndex = 0);
 
 	VkRenderPass getAssignedRenderpassID(Material* pMat);
 
@@ -127,6 +127,9 @@ public:
 
 	Camera mainCamera;
 	
+
+	void setGlobalObjs();
+	void setGlobalLights();
 
 private:
 

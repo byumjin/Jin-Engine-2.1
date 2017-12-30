@@ -126,4 +126,18 @@
       <Filter>Source Files\Shader</Filter>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\postProcess.frag">
+      <Filter>Source Files\Shader</Filter>
+    </None>
+    <None Include="Shader\postProcess.vert">
+      <Filter>Source Files\Shader</Filter>
+    </None>
+    <None Include="Shader\toneMapping.frag">
+      <Filter>Source Files\Shader</Filter>
+    </None>
+    <None Include="Shader\sky.frag">
+      <Filter>Source Files\Shader</Filter>
+    </None>
+  </ItemGroup>
 </Project>
