@@ -47,7 +47,8 @@ public:
 		std::vector<VkPipelineColorBlendAttachmentState> &colorBlendAttachments, VkBool32 bDepthStencil, VkPipelineDepthStencilStateCreateInfo &depthStencilInfo,
 		float blendingConstant, VkRenderPass &renderPass);	
 
-	void createDescriptorWrite(VkWriteDescriptorSet &writeDescriptorSet, uint32_t index, uint32_t binding, VkDescriptorType type, VkDescriptorImageInfo *imageInfo, VkDescriptorBufferInfo *bufferInfo);	
+	void createDescriptorWrite(VkWriteDescriptorSet &writeDescriptorSet, uint32_t index, uint32_t binding, VkDescriptorType type,
+		VkDescriptorImageInfo *imageInfo, VkDescriptorBufferInfo *bufferInfo, VkBufferView TexelBufferView);
 	void createImageInfo(VkDescriptorImageInfo &imageInfo, VkImageLayout imageLayout, VkImageView imageView, VkSampler sampler);
 	void createBufferInfo(VkDescriptorBufferInfo &bufferInfo, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize bufferSize);
 
@@ -58,13 +59,18 @@ public:
 	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo &depthStencilInfo);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
 	{
 
 	}
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+	{
+
+	}
+
+	virtual void updateCPUsideWork()
 	{
 
 	}
@@ -89,6 +95,11 @@ public:
 	uint32_t numPointLights;
 	uint32_t numDirectionalLights;
 
+	bool isComputeShader()
+	{
+		return computeShaderPath == "" ? true : false;
+	}
+
 protected:
 
 	VkDescriptorPool descriptorPool;
@@ -106,10 +117,6 @@ protected:
 
 	std::string computeShaderPath;
 	glm::ivec3 computeDispatchSize;
-
-	
-
-
 };
 
 class GbufferMaterial : public Material
@@ -119,7 +126,7 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
@@ -188,7 +195,7 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
@@ -214,12 +221,98 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
 
 private:
+};
+
+
+class ScreenSpaceProjectionMaterial : public Material
+{
+public:
+
+	virtual ~ScreenSpaceProjectionMaterial()
+	{
+		vkDestroyBuffer(vulkanApp->getDevice(), planeInfoBuffer, nullptr);
+		vkFreeMemory(vulkanApp->getDevice(), planeInfoBufferMem, nullptr);
+
+		Material::~Material();
+	}
+
+	virtual void shutDown()
+	{
+		Material::shutDown();
+	}
+
+	void updatePlaneInfoPackBuffer(PlaneInfoPack &planeInfoPack);
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+	void createLocalBuffer();
+
+	VkBuffer planeInfoBuffer;
+private:
+
+	
+	VkDeviceMemory planeInfoBufferMem;
+
+	
+};
+
+class ScreenSpaceReflectionMaterial : public Material
+{
+public:
+	
+	virtual ~ScreenSpaceReflectionMaterial()
+	{
+		
+		//vkDestroyBuffer(vulkanApp->getDevice(), SSRInfoBuffer, nullptr);
+		//vkFreeMemory(vulkanApp->getDevice(), SSRInfoBufferMem, nullptr);
+		
+
+		Material::~Material();
+	}
+	
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+	/*
+	void createLocalBuffer()
+	{
+		VkDeviceSize bufferSize = sizeof(glm::vec4);
+		vulkanApp->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, SSRInfoBuffer, SSRInfoBufferMem);
+	}
+
+	void updateLocalBuffer(glm::vec4 *pBuffer)
+	{
+		VkDeviceSize bufferSize = sizeof(glm::vec4);
+
+		void* data;
+		vkMapMemory(vulkanApp->getDevice(), SSRInfoBufferMem, 0, bufferSize, 0, &data);
+		memcpy(data, pBuffer, static_cast<size_t>(bufferSize));
+		vkUnmapMemory(vulkanApp->getDevice(), SSRInfoBufferMem);
+	}
+	*/	
+
+private:
+
+	//VkBuffer SSRInfoBuffer;
+	//VkDeviceMemory SSRInfoBufferMem;
 };
 
 class SkyRenderingMaterial : public Material
@@ -229,7 +322,70 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+private:
+};
+
+class HolePatchingMaterial : public Material
+{
+public:
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+private:
+};
+
+class HorizontalBlurMaterial : public Material
+{
+public:
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+private:
+};
+
+class VerticalBlurMaterial : public Material
+{
+public:
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+private:
+};
+
+
+
+
+class CompositePostProcessMaterial : public Material
+{
+public:
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
@@ -244,7 +400,7 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
@@ -259,10 +415,38 @@ public:
 	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
 
 	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
-		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
 		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
 
 private:
 };
+
+class DepthMipmapMaterial : public Material
+{
+public:
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+private:
+};
+
+class DepthMipCompMaterial : public Material
+{
+public:
+
+	virtual void updateCPUsideWork()
+	{
+		int text = 345;
+	}
+
+private:
+};
+

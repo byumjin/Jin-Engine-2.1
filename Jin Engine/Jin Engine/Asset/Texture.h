@@ -20,6 +20,7 @@ public:
 	void LoadFromFilename(Vulkan *vulkanAppParam, std::string pathParam);
 
 	void loadTextureImage(std::string path);
+	void loadTexture2DArrayImage(std::string path, std::string extension);
 
 	void setMiplevel(int mipLevelParam)
 	{
@@ -69,13 +70,13 @@ public:
 	}
 	*/
 
+	int mipLevel;
+
 private:
 
 	int texWidth;
 	int texHeight;
 	int texChannels;
-
-	int mipLevel;
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;

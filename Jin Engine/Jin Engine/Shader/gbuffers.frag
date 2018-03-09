@@ -20,15 +20,17 @@ layout(set = 0, binding = 5) uniform cameraBuffer
 	mat4 InvViewProjMat;
 
 	vec4 cameraWorldPos;
+	vec4 viewPortSize;
 };
 
 
 
-layout(location = 0) in vec3 fragColor;
-layout(location = 1) in vec3 fragTangent;
-layout(location = 2) in vec3 fragBiTangent;
-layout(location = 3) in vec3 fragNormal;
-layout(location = 4) in vec2 fragUV;
+layout(location = 0) in vec4 fragPos;
+layout(location = 1) in vec3 fragColor;
+layout(location = 2) in vec3 fragTangent;
+layout(location = 3) in vec3 fragBiTangent;
+layout(location = 4) in vec3 fragNormal;
+layout(location = 5) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outSpecColor;
@@ -37,7 +39,9 @@ layout(location = 3) out vec4 outEmissiveColor;
 
 void main()
 {
-    outColor = texture(basicColorTexture, fragUV);
+	float lod = log2( -fragPos.z / 3.0 + 1.0);
+
+    outColor = textureLod(basicColorTexture, fragUV, lod);
 
 	if(outColor.w < .1)
 		discard;

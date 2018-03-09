@@ -92,7 +92,8 @@ VkRenderPass Renderer::getAssignedRenderpassID(Material* pMat)
 	}
 	else
 	{
-		return postProcessChain[pMat->renderPassID - RenderPassID::MAIN - 1]->getRenderPass();
+		uint32_t renderPassID = pMat->renderPassID;
+		return postProcessChain[renderPassID - (RenderPassID::MAIN + 1)]->getRenderPass();
 	}
 }
 
@@ -224,122 +225,122 @@ void Renderer::setGlobalObjs()
 
 			//arch
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("arch", "Asset/Texture/sponza/arch/arch_albedo.tga", "Asset/Texture/sponza/arch/arch_spec.tga", "Asset/Texture/sponza/arch/arch_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("arch", "Asset/Texture/sponza/arch/arch_albedo.tga", "Asset/Texture/sponza/arch/arch_spec.tga", "Asset/Texture/sponza/arch/arch_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//bricks
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.tga", "Asset/Texture/sponza/bricks/bricks_spec.tga", "Asset/Texture/sponza/bricks/bricks_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.tga", "Asset/Texture/sponza/bricks/bricks_spec.tga", "Asset/Texture/sponza/bricks/bricks_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//ceiling
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.tga", "Asset/Texture/sponza/ceiling/ceiling_spec.tga", "Asset/Texture/sponza/ceiling/ceiling_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.tga", "Asset/Texture/sponza/ceiling/ceiling_spec.tga", "Asset/Texture/sponza/ceiling/ceiling_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//chain
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.tga", "Asset/Texture/sponza/chain/chain_spec.tga", "Asset/Texture/sponza/chain/chain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.tga", "Asset/Texture/sponza/chain/chain_spec.tga", "Asset/Texture/sponza/chain/chain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_a
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.tga", "Asset/Texture/sponza/column/column_a_spec.tga", "Asset/Texture/sponza/column/column_a_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.tga", "Asset/Texture/sponza/column/column_a_spec.tga", "Asset/Texture/sponza/column/column_a_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_b
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.tga", "Asset/Texture/sponza/column/column_b_spec.tga", "Asset/Texture/sponza/column/column_b_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.tga", "Asset/Texture/sponza/column/column_b_spec.tga", "Asset/Texture/sponza/column/column_b_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_c
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.tga", "Asset/Texture/sponza/column/column_c_spec.tga", "Asset/Texture/sponza/column/column_c_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.tga", "Asset/Texture/sponza/column/column_c_spec.tga", "Asset/Texture/sponza/column/column_c_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//detail
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.tga", "Asset/Texture/sponza/detail/detail_spec.tga", "Asset/Texture/sponza/detail/detail_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.tga", "Asset/Texture/sponza/detail/detail_spec.tga", "Asset/Texture/sponza/detail/detail_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.tga", "Asset/Texture/sponza/fabric/fabric_blue_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.tga", "Asset/Texture/sponza/fabric/fabric_blue_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.tga", "Asset/Texture/sponza/fabric/fabric_green_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.tga", "Asset/Texture/sponza/fabric/fabric_green_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.tga", "Asset/Texture/sponza/fabric/fabric_red_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.tga", "Asset/Texture/sponza/fabric/fabric_red_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//flagpole
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.tga", "Asset/Texture/sponza/flagpole/flagpole_spec.tga", "Asset/Texture/sponza/flagpole/flagpole_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.tga", "Asset/Texture/sponza/flagpole/flagpole_spec.tga", "Asset/Texture/sponza/flagpole/flagpole_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//floor
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.tga", "Asset/Texture/sponza/floor/floor_spec.tga", "Asset/Texture/sponza/floor/floor_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.tga", "Asset/Texture/sponza/floor/floor_spec.tga", "Asset/Texture/sponza/floor/floor_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.tga", "Asset/Texture/sponza/lion/lion_spec.tga", "Asset/Texture/sponza/lion/lion_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.tga", "Asset/Texture/sponza/lion/lion_spec.tga", "Asset/Texture/sponza/lion/lion_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion_back
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.tga", "Asset/Texture/sponza/lion_background/lion_background_spec.tga", "Asset/Texture/sponza/lion_background/lion_background_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.tga", "Asset/Texture/sponza/lion_background/lion_background_spec.tga", "Asset/Texture/sponza/lion_background/lion_background_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//plant
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.tga", "Asset/Texture/sponza/plant/vase_plant_spec.tga", "Asset/Texture/sponza/plant/vase_plant_norm.tga", "Asset/Texture/sponza/plant/vase_plant_emiss.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.tga", "Asset/Texture/sponza/plant/vase_plant_spec.tga", "Asset/Texture/sponza/plant/vase_plant_norm.tga", "Asset/Texture/sponza/plant/vase_plant_emiss.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//roof
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.tga", "Asset/Texture/sponza/roof/roof_spec.tga", "Asset/Texture/sponza/roof/roof_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.tga", "Asset/Texture/sponza/roof/roof_spec.tga", "Asset/Texture/sponza/roof/roof_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//thorn
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga", "Asset/Texture/sponza/thorn/sponza_thorn_spec.tga", "Asset/Texture/sponza/thorn/sponza_thorn_norm.tga", "Asset/Texture/sponza/thorn/sponza_thorn_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga", "Asset/Texture/sponza/thorn/sponza_thorn_spec.tga", "Asset/Texture/sponza/thorn/sponza_thorn_norm.tga", "Asset/Texture/sponza/thorn/sponza_thorn_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.tga", "Asset/Texture/sponza/vase/vase_spec.tga", "Asset/Texture/sponza/vase/vase_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.tga", "Asset/Texture/sponza/vase/vase_spec.tga", "Asset/Texture/sponza/vase/vase_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_hanging
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_round
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			sponza->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("curtain_red")); //missing 1
@@ -375,6 +376,7 @@ void Renderer::setGlobalObjs()
 		}
 
 		//cerberus
+		/*
 		{
 			Object *cerberus = new Object;
 			cerberus->initialize(vulkanApp, "Cerberus", "Asset/Object/Cerberus/Cerberus.obj", true);
@@ -398,14 +400,16 @@ void Renderer::setGlobalObjs()
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
 			temp_Gbuffer_Mat->createPipeline("Cerberus", "Asset/Texture/Cerberus/Cerberus_A.tga", "Asset/Texture/Cerberus/Cerberus_S.tga",
 				"Asset/Texture/Cerberus/Cerberus_N.tga", "Asset/Texture/Cerberus/Cerberus_E.tga",
-				&cerberus->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+				&cerberus->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			cerberus->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("Cerberus"));
 
 			AssetDatabase::GetInstance()->objectManager.push_back(cerberus);
 		}
+		*/
 
+		
 		//Chromie
 		{
 			Object *Chromie = new Object;
@@ -429,13 +433,14 @@ void Renderer::setGlobalObjs()
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
 			temp_Gbuffer_Mat->createPipeline("Chromie", "Asset/Texture/storm_hero_chromie_ultimate_diff.tga", "Asset/Texture/storm_hero_chromie_ultimate_spec.tga",
 				"Asset/Texture/storm_hero_chromie_ultimate_norm.tga", "Asset/Texture/storm_hero_chromie_ultimate_emis.tga",
-				&Chromie->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+				&Chromie->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			Chromie->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("Chromie"));
 
 			AssetDatabase::GetInstance()->objectManager.push_back(Chromie);
 		}
+		
 	}
 }
 
@@ -551,7 +556,7 @@ void Renderer::setGlobalLights()
 	//Sky System
 	directionalLights.clear();
 
-	//skySystem.sun.updateOrbit(90.0f, 0.0f, 0.0);
+	skySystem.sun.updateOrbit(45.0f, 0.0f, 0.0);
 	skySystem.sun.lightInfo.color = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	skySystem.sun.lightInfo.direction = skySystem.sun.getViewVector4();
 
@@ -572,6 +577,8 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	}
 
 	vulkanApp = pVulkanApp;
+
+	//gui.initGUI(vulkanApp);
 	
 	createSemaphores();
 	createQueues();
@@ -584,6 +591,8 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	createGbufferCommandPool();
 	createFrustumCullingCommandPool();
 
+	//createGUICommandPool();
+
 	createMainCommandPool();	
 
 	createGbuffers();
@@ -591,7 +600,30 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	depthTexture = new Texture;
 	depthTexture->vulkanApp = vulkanApp;
 
+	SSRDepthTexture = new Texture;
+	SSRDepthTexture->vulkanApp = vulkanApp;
+
+	//createGUICanvas();
+
+	/*
+	depthMipmapTexture = new Texture;
+	depthMipmapTexture->vulkanApp = vulkanApp;
+	
+	depthMipTexture.resize(DEPTH_MIP_SIZE);
+
+	for (size_t i = 0; i < depthMipTexture.size(); i++)
+	{
+		depthMipTexture[i] = new Texture;
+		depthMipTexture[i]->vulkanApp = vulkanApp;
+	}
+	
+
+	depthMipSizeBuffer.resize(DEPTH_MIP_SIZE);
+	depthMipSizeBufferMemory.resize(DEPTH_MIP_SIZE);
+	*/
+
 	createDepthResources();
+	createSSRDepthResources();
 
 	createGbufferRenderPass();
 	createMainRenderPass();
@@ -605,82 +637,356 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	//FrustumCullingMaterial
 	{
 		FrustumCullingMaterial* frustumCulling_Mat = new FrustumCullingMaterial;
+		frustumCulling_Mat->createPipeline("frustumCulling", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0),
+			 NULL,NULL, NULL);
 
-		//frustumCulling_Mat->createLocalBuffer();
-
-		frustumCulling_Mat->createPipeline("frustumCulling", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0),
-			NULL, NULL, NULL);
-
-		pfrustumCullingMaterial = frustumCulling_Mat;// dynamic_cast<FrustumCullingMaterial*>(DBInstance->FindAsset<Material>("frustumCulling"));
+		pfrustumCullingMaterial = frustumCulling_Mat;
+		// dynamic_cast<FrustumCullingMaterial*>(DBInstance->FindAsset<Material>("frustumCulling"));
 	}
+
+	//updateDepthMipmapBuffers();
+
+	/*
+	//Depth Mipmap
+	{
+		//VkFormat depthFormat = vulkanApp->findDepthFormat();
+
+		VkFormat depthFormat = VK_FORMAT_R32_SFLOAT;
+
+		for (int d = 0; d < DEPTH_MIP_SIZE; d++)
+		{
+			DepthMipmapMaterial* depth_mipmap_Mat = new DepthMipmapMaterial;
+
+			PostProcess *Depth_mip_PP = new PostProcess(vulkanApp, "depth_mat_" + std::to_string(d), depthFormat, 1, singleTriangularVertexBuffer, VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST, false);
+
+			//for ReleaseMode
+			glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width)/(uint32_t)glm::max(pow(2, d-1), 1.0), static_cast<float>(swapChainExtent.height)/ (uint32_t)glm::max(pow(2, d - 1), 1.0), 1.0f, 1.0f);
+
+			Depth_mip_PP->initialize(sizeScale);
+
+			depth_mipmap_Mat->createPipeline("depth_mat_" + std::to_string(d), "", "", "", "", NULL, &depthMipSizeBuffer[(uint32_t)glm::max(float(d-1), 0.0f)],
+				NULL, 0, NULL, 0, NULL,
+				glm::vec2(0.0), Depth_mip_PP->sizeScale, Depth_mip_PP->getRenderPass(), NULL, d == 0 ? depthTexture : postProcessChain[DEPTH_MIP_POSTPROCESS + d-1]->renderTargets[0]); // !!!!!
+			assignRenderpassID(depth_mipmap_Mat, Depth_mip_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+			Depth_mip_PP->recordCommandBuffer();
+
+			postProcessChain.push_back(Depth_mip_PP);
+		}
+	}
+	*/
 
 	setGlobalObjs();
 	setGlobalLights();	
 
+	createPerFrameBuffer();
+
 	//PBR material
 	{
 		UberMaterial* temp_uber_Mat = new UberMaterial;
-
 		
-		PostProcess *PBR_PP = new PostProcess(vulkanApp, "uber_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer);
-		PBR_PP->initialize(swapChainExtent);
+		PostProcess *PBR_PP = new PostProcess(vulkanApp, "uber_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+
+		PBR_PP->initialize(sizeScale);
 
 		temp_uber_Mat->createPipeline("uber_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
-			&pointLightUniformBuffer, pointLightInfo.size(),&directionalLightUniformBuffer, directionalLightInfo.size(),
-			glm::vec2(0.0), glm::vec4(PBR_PP->getExtent().width, PBR_PP->getExtent().height, 1.0, 1.0), PBR_PP->getRenderPass(), &gbuffers, depthTexture);
-		assignRenderpassID(temp_uber_Mat, PBR_PP->getRenderPass(), postProcessChain.size());
+			&pointLightUniformBuffer, pointLightInfo.size(),&directionalLightUniformBuffer, directionalLightInfo.size(), NULL,
+			glm::vec2(0.0), PBR_PP->sizeScale, PBR_PP->getRenderPass(), &gbuffers, depthTexture);
+		assignRenderpassID(temp_uber_Mat, PBR_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
 
 		PBR_PP->recordCommandBuffer();
 
 		postProcessChain.push_back(PBR_PP);
 	}
 
-	//SkyRendering material
+	
+	//SSR material
 	{
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0, 1.0);
+
+		//SSRP
+		ScreenSpaceProjectionMaterial* SSRP_Mat = new ScreenSpaceProjectionMaterial;
+
+		PostProcess *SSRP_PP = new PostProcess(vulkanApp, "ssrp_mat", VK_FORMAT_R32G32B32A32_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_LINEAR, true, 0);
+
+		SSRP_PP->initialize(sizeScale);
+
+		createSSRBuffer();
+
+		//SSRP_Mat->addBuffer(&SSROffsetBuffer);
+		SSRP_Mat->addBuffer(&SSRDepthBuffer);
+
+		std::vector<Texture*> tempSSRPRenderTargets;
+		tempSSRPRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //Scene image
+
+		SSRP_Mat->createPipeline("ssrp_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL,
+			glm::vec2(0.0), sizeScale,
+			NULL, &tempSSRPRenderTargets, depthTexture);
+
+		assignRenderpassID(SSRP_Mat, NULL, static_cast<uint32_t>(postProcessChain.size()));
+
+		PlaneInfoPack planeInfoPack;
+		planeInfoPack.numPlanes = 1;
+		planeInfoPack.planeInfo[0].centerPoint = glm::vec4(0.0, 0.0, 0.0, 0.0);
+		planeInfoPack.planeInfo[0].size = glm::vec4(20.0);
+
+		glm::mat4 basicMat;
+		basicMat[0] = glm::vec4(1.0, 0.0, 0.0, 0.0); //tan
+		basicMat[1] = glm::vec4(0.0, 1.0, 0.0, 0.0); //bitan
+		basicMat[2] = glm::vec4(0.0, 0.0, 1.0, 0.0); //normal
+		basicMat[3] = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+		planeInfoPack.planeInfo[0].rotMat = glm::rotate(basicMat, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+
+		SSRP_Mat->updatePlaneInfoPackBuffer(planeInfoPack);
+
+		SSRP_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(SSRP_PP);
+
+
+		//SSR
+		createSSRInfoBuffer();
+
+		std::string noiseTex = "Asset/Texture/noise/SSR_Noise.tga";
+		AssetDatabase::GetInstance()->SaveTexture(noiseTex);
+
+		ScreenSpaceReflectionMaterial* temp_ssr_Mat = new ScreenSpaceReflectionMaterial;
+
+		PostProcess *SSR_PP = new PostProcess(vulkanApp, "ssr_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+
+
+		SSR_PP->initialize(sizeScale);
+
+		temp_ssr_Mat->addBuffer(&(SSRP_Mat->planeInfoBuffer));
+		temp_ssr_Mat->addBuffer(&SSRInfoBuffer);
+		temp_ssr_Mat->addBuffer(&SSRDepthBuffer);
+
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 2]->renderTargets[0]);  //Scene
+
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>(noiseTex));
+
+
+		temp_ssr_Mat->createPipeline("ssr_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), NULL,
+			glm::vec2(0.0), SSR_PP->sizeScale, SSR_PP->getRenderPass(), &tempRenderTargets, depthTexture);
+		assignRenderpassID(temp_ssr_Mat, SSR_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		glm::vec4 info = glm::vec4(1.0, 1.0, 1.0, 1.0);
+		
+
+		SSR_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(SSR_PP);
+	}
+
+	
+	//HolePatching
+	{
+		HolePatchingMaterial * temp_hole_Mat = new HolePatchingMaterial;
+
+		PostProcess *HPP = new PostProcess(vulkanApp, "HolePatchingMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
+			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+
+		HPP->initialize(sizeScale);
+
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+
+		temp_hole_Mat->createPipeline("HolePatchingMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
+			glm::vec2(0.0), glm::vec4(HPP->getExtent().width, HPP->getExtent().height, 1.0, 1.0), HPP->getRenderPass(), &tempRenderTargets, NULL);
+
+		assignRenderpassID(temp_hole_Mat, HPP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		HPP->recordCommandBuffer();
+
+		postProcessChain.push_back(HPP);
+	}
+	
+
+	/*
+	//Blur
+	{
+		HorizontalBlurMaterial * temp_horizon_Mat = new HorizontalBlurMaterial;
+
+		PostProcess *HBP = new PostProcess(vulkanApp, "HorizonBlurMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
+			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+
+		HBP->initialize(sizeScale);
+
+		std::vector<Texture*> tempRenderTargets;
+		
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+
+		temp_horizon_Mat->createPipeline("HorizonBlurMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
+			glm::vec2(0.0), glm::vec4(HBP->getExtent().width, HBP->getExtent().height, 1.0, 1.0), HBP->getRenderPass(), &tempRenderTargets, NULL);
+
+		assignRenderpassID(temp_horizon_Mat, HBP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		HBP->recordCommandBuffer();
+
+		postProcessChain.push_back(HBP);
+	}
+
+	/*
+
+	//Blur
+	{
+		VerticalBlurMaterial * temp_vertical_Mat = new VerticalBlurMaterial;
+
+		PostProcess *VBP = new PostProcess(vulkanApp, "VerticalBlurMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
+			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+
+		VBP->initialize(sizeScale);
+
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+
+		temp_vertical_Mat->createPipeline("VerticalBlurMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
+			glm::vec2(0.0), glm::vec4(VBP->getExtent().width, VBP->getExtent().height, 1.0, 1.0), VBP->getRenderPass(), &tempRenderTargets, NULL);
+
+		assignRenderpassID(temp_vertical_Mat, VBP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		VBP->recordCommandBuffer();
+
+		postProcessChain.push_back(VBP);
+	}
+	
+	*/
+
+	skySystem.lowFreqTexture->connectDevice(pVulkanApp);
+	skySystem.lowFreqTexture->loadTexture2DArrayImage("Asset/Texture/cloudTextures/lowFreq/lowFreq", ".tga");
+
+	skySystem.highFreqTexture->connectDevice(pVulkanApp);
+	skySystem.highFreqTexture->loadTexture2DArrayImage("Asset/Texture/cloudTextures/highFreq/highFreq", ".tga");
+
+	AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/cloudTextures/wheather.tga");
+
+	/*
+	//SkyRendering material
+	{			
 		SkyRenderingMaterial* temp_sky_Mat = new SkyRenderingMaterial;
 
+		PostProcess *SKY_PP = new PostProcess(vulkanApp, "SkyRendering_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR);
+		
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+		
+		SKY_PP->initialize(sizeScale);
 
-		PostProcess *SKY_PP = new PostProcess(vulkanApp, "SkyRendering_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer);
-		SKY_PP->initialize(swapChainExtent);
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]);
+		tempRenderTargets.push_back(skySystem.lowFreqTexture);
+		tempRenderTargets.push_back(skySystem.highFreqTexture);
 
 		temp_sky_Mat->createPipeline("SkyRendering_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
-			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(),
-			glm::vec2(0.0), glm::vec4(SKY_PP->getExtent().width, SKY_PP->getExtent().height, 1.0, 1.0), SKY_PP->getRenderPass(), &postProcessChain[postProcessChain.size() - 1]->renderTargets, NULL);
-		assignRenderpassID(temp_sky_Mat, SKY_PP->getRenderPass(), postProcessChain.size());
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
+			glm::vec2(0.0), glm::vec4(SKY_PP->getExtent().width, SKY_PP->getExtent().height, 1.0, 1.0), SKY_PP->getRenderPass(), &tempRenderTargets, NULL);
+		assignRenderpassID(temp_sky_Mat, SKY_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
 
 		SKY_PP->recordCommandBuffer();
 
 		postProcessChain.push_back(SKY_PP);
 	}
+	*/
 
+	//Composite Post Process
+	{
+		CompositePostProcessMaterial* temp_cpp_Mat = new CompositePostProcessMaterial;
+
+		PostProcess *C_PP = new PostProcess(vulkanApp, "CompositePostProcessMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
+			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		//for ReleaseMode
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+
+		C_PP->initialize(sizeScale);
+
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 4]->renderTargets[0]); //Scene
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+
+		temp_cpp_Mat->createPipeline("CompositePostProcessMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
+			glm::vec2(0.0), glm::vec4(C_PP->getExtent().width, C_PP->getExtent().height, 1.0, 1.0), C_PP->getRenderPass(), &tempRenderTargets, NULL);
+
+		assignRenderpassID(temp_cpp_Mat, C_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		C_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(C_PP);
+	}
+
+	/*
 	//ToneMapping material
 	{
 		ToneMappingMaterial* temp_tone_Mat = new ToneMappingMaterial;
 
 		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! VK_FORMAT_R16G16B16A16_SFLOAT
-		PostProcess *tone_PP = new PostProcess(vulkanApp, "tonemapping_mat", swapChainImageFormat, 1, singleTriangularVertexBuffer);
-		tone_PP->initialize(swapChainExtent);
-
+		PostProcess *tone_PP = new PostProcess(vulkanApp, "tonemapping_mat", swapChainImageFormat, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR);
+		tone_PP->initialize(glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f));
 
 		temp_tone_Mat->createPipeline("tonemapping_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
 			NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(),
-			glm::vec2(0.0), glm::vec4(tone_PP->getExtent().width, tone_PP->getExtent().height, 1.0, 1.0), tone_PP->getRenderPass(), &postProcessChain[postProcessChain.size() - 1]->renderTargets, NULL);
-		assignRenderpassID(temp_tone_Mat, tone_PP->getRenderPass(), postProcessChain.size());
+			glm::vec2(0.0), tone_PP->sizeScale, tone_PP->getRenderPass(), &postProcessChain[postProcessChain.size() - 1]->renderTargets, NULL);
+		assignRenderpassID(temp_tone_Mat, tone_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
 
 		tone_PP->recordCommandBuffer();
 
 		postProcessChain.push_back(tone_PP);
 	}
+	*/
 
 	//Present material
 	{
 		PresentMaterial* temp_last_Mat = new PresentMaterial;
 
 		temp_last_Mat->createPipeline("present_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
-			NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(),
+			NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL,
 			glm::vec2(0.0), glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0), mainRenderPass, &postProcessChain[postProcessChain.size()-1]->renderTargets, NULL);
 		assignRenderpassID(temp_last_Mat, mainRenderPass, 0);
 	}
+
+	/*
+	std::vector<Texture*> guiCanvas;
+	std::vector<VkFramebuffer> guiFramebuffers;
+
+	std::vector<VkImageView> guiImageViews;
+	guiImageViews.resize(guiCanvas.size());
+
+	for (size_t i = 0; i < guiImageViews.size(); i++)
+	{
+		guiImageViews[i] = guiCanvas[i]->textureImageView;
+	}
+	
+	createGUIFrameBuffers();	
+	*/
 
 	createGbufferFramebuffers();
 	createMainFramebuffers();
@@ -690,10 +996,29 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	createFrustumCullingCommandBuffers();
 	createMainCommandBuffers();
 
+	//createGUICommandBuffers();
+
+
 	//record static CommandBuffers;
 	recordMainCommandBuffers();
-
+	//recordGUICommandBuffers();
 }
+
+/*
+void Renderer::updateDepthMipmapBuffers()
+{
+	for (int d = 0; d < DEPTH_MIP_SIZE; d++)
+	{
+		glm::vec4 bufferInfo;
+		bufferInfo = glm::vec4(static_cast<float>(swapChainExtent.width) / (uint32_t)pow(2, d), static_cast<float>(swapChainExtent.height) / (uint32_t)pow(2, d), 0.0, 0.0);
+		
+		if (d == 0)
+			bufferInfo.w = 1.0f;
+
+		vulkanApp->updateBuffer(&bufferInfo, depthMipSizeBufferMemory[d], sizeof(glm::vec4));
+	}
+}
+*/
 
 void Renderer::createPointLightBuffer()
 {
@@ -721,6 +1046,71 @@ void Renderer::updateDirectionalLightBuffer()
 	vulkanApp->updateBuffer(&directionalLights[0]->lightInfo, directionalLightUniformMemory, sizeof(LightInfo) * directionalLightInfo.size());
 }
 
+void Renderer::createSSRBuffer()
+{
+	//SSROforReset = new SSRDepthInfo[MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT];
+	
+
+	/*
+	VkDeviceSize bufferSize = sizeof(SSRDepthInfo) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
+
+	vulkanApp->createBuffer(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		SSROffsetBuffer, SSROffsetBufferMemory);
+	*/
+
+	SSRDforReset = new uint32_t[MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT];
+
+	VkDeviceSize bufferSize2 = sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
+
+	vulkanApp->createBuffer(bufferSize2, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		SSRDepthBuffer, SSRDepthBufferMemory);
+
+}
+
+void Renderer::updateSSRBuffer()
+{
+	VkDeviceSize bufferSize = sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
+	//vulkanApp->bufferMemoryBarrier(SSRDepthBuffer, bufferSize, VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_HOST_WRITE_BIT, vulkanApp->getTransferCmdPool(), vulkanApp->getTransferQueue());
+	
+	memset(SSRDforReset, UINT32_MAX, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);
+	vulkanApp->updateBuffer(SSRDforReset, SSRDepthBufferMemory, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);	
+
+	//vulkanApp->bufferMemoryBarrier(SSRDepthBuffer, bufferSize, VK_ACCESS_HOST_WRITE_BIT, VK_ACCESS_SHADER_WRITE_BIT, vulkanApp->getTransferCmdPool(), vulkanApp->getTransferQueue());
+}
+
+void Renderer::createSSRInfoBuffer()
+{
+	vulkanApp->createBuffer(sizeof(glm::vec4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		SSRInfoBuffer, SSRInfoBufferMem);
+
+	updateSSRInfoBuffer();
+}
+
+void Renderer::updateSSRInfoBuffer()
+{
+	glm::vec4 tempSSRInfo = glm::vec4(interface.gRoughness, interface.gIntensity, 1.0, 1.0);
+	vulkanApp->updateBuffer(&tempSSRInfo, SSRInfoBufferMem, sizeof(glm::vec4));
+}
+
+void Renderer::createPerFrameBuffer()
+{
+	vulkanApp->createBuffer(sizeof(perframeBuffer), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		perFrameBuffer, perFrameBufferMemory);
+
+	updatePerFrameBuffer();
+
+}
+
+void Renderer::updatePerFrameBuffer()
+{
+	perframeBuffer perFrameBuffer;
+	perFrameBuffer.timeInfo = glm::vec4(currentTime*0.001f, deltaTime*0.001f, 0.0f, 0.0f);
+	vulkanApp->updateBuffer(&perFrameBuffer, perFrameBufferMemory, sizeof(perframeBuffer));
+}
+
+
+
+
 void Renderer::reInitializeRenderer()
 {
 	releaseRenderPart();
@@ -746,6 +1136,15 @@ void Renderer::reInitializeRenderer()
 
 	mainCamera.shutDown();
 
+	//delete[] SSROforReset;
+	delete[] SSRDforReset;
+	
+	vkDestroyBuffer(vulkanApp->getDevice(), SSRDepthBuffer, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), SSRDepthBufferMemory, nullptr);
+
+	//vkDestroyBuffer(vulkanApp->getDevice(), SSROffsetBuffer, nullptr);
+	//vkFreeMemory(vulkanApp->getDevice(), SSROffsetBufferMemory, nullptr);
+
 
 	vkDestroyBuffer(vulkanApp->getDevice(), directionalLightUniformBuffer, nullptr);
 	vkFreeMemory(vulkanApp->getDevice(), directionalLightUniformMemory, nullptr);
@@ -753,6 +1152,8 @@ void Renderer::reInitializeRenderer()
 	vkDestroyBuffer(vulkanApp->getDevice(), pointLightUniformBuffer, nullptr);
 	vkFreeMemory(vulkanApp->getDevice(), pointLightUniformMemory, nullptr);
 
+	vkDestroyBuffer(vulkanApp->getDevice(), perFrameBuffer, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), perFrameBufferMemory, nullptr);
 
 	DELETE_SAFE(vulkanApp);
 
@@ -848,6 +1249,7 @@ void Renderer::mainloop()
 
 		unsigned int realTime = timer.getTime();
 		deltaTime = realTime - previousTime;
+		currentTime += deltaTime;
 
 
 		interface.fpstracker++;
@@ -861,7 +1263,7 @@ void Renderer::mainloop()
 			interface.fpstracker = 0;
 			fpsPreviosTime = realTime;
 
-			std::string title = "VR Project | " + std::to_string(interface.fps) + " fps | " + std::to_string(1000.0 / (double)interface.fps) + " ms";
+			std::string title = "Jin Engine | " + std::to_string(interface.fps) + " fps | " + std::to_string(1000.0 / (double)interface.fps) + " ms";
 			interface.setWindowTitle(title);
 		}
 
@@ -915,12 +1317,20 @@ void Renderer::mainloop()
 		culling();
 
 		//update SkySystem
-		skySystem.sun.updateOrbit(0.0f, deltaTime * 0.05f, 0.0f);
+		//skySystem.sun.updateOrbit(deltaTime * 0.05f, 0.0f, 0.0f);
 		skySystem.sun.lightInfo.direction = skySystem.sun.getViewVector4();
 		updateDirectionalLightBuffer();
 		
+		updateSSRBuffer();
+		updateSSRInfoBuffer();
+
+
+
+		updatePerFrameBuffer();
+
 		//record it per everyframe but can do frustum culling
 		recordGbufferCommandBuffers();
+		
 
 		draw(deltaTime);
 
@@ -990,6 +1400,25 @@ void Renderer::draw(unsigned int deltaTime)
 		prevSM = currentSM;
 	}
 
+	//guiQueue
+	/*
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = prevSM;
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &guiCmd[0];
+
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = &guiSemaphore;
+
+	vkQueueWaitIdle(guiQueue);
+
+	if (vkQueueSubmit(guiQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+	*/
+
 
 	//frameQueue
 	submitInfo.waitSemaphoreCount = 1;
@@ -1007,6 +1436,9 @@ void Renderer::draw(unsigned int deltaTime)
 	{
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
+
+	
+
 
 	//presentQueue
 	VkPresentInfoKHR presentInfo = {};
@@ -1043,34 +1475,49 @@ void Renderer::reCreateRenderer()
 	
 	releaseRenderPart();
 	releaseDepthResources();
+	releaseSSRDepthResources();
 
 	createSwapChain();
 	createSwapChainImageViews();	
 	
 	updateGbuffers();
+
 	createDepthResources();
+	createSSRDepthResources();
+
+	//updateDepthMipmapBuffers();
 
 	createGbufferRenderPass();
 	createMainRenderPass();
 
-	//resources
-	mainCamera.updateAspectRatio(static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height));
+	//gui.setRenderPass();
+	//gui.setDescriptorPool();
 
+	//resources
+	mainCamera.updateAspectRatio(static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height), glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 0.0, 0.0));
+
+	AssetDatabase *pAssetDB = AssetDatabase::GetInstance();
 
 	//postProcess
 	for (size_t i = 0; i < postProcessChain.size(); i++)
 	{
-		postProcessChain[i]->initialize(swapChainExtent);
+		postProcessChain[i]->initialize(glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), postProcessChain[i]->sizeScale.z, postProcessChain[i]->sizeScale.w));
 	}
 
-	AssetDatabase *pAssetDB = AssetDatabase::GetInstance();
+	
 
+	
 	//materials
 	for (uint32_t i = 0; i < pAssetDB->materialList.size(); i++)
 	{
 		Material* pMaterial = pAssetDB->FindAsset<Material>(pAssetDB->materialList[i]);
-		pMaterial->updatePipeline(pMaterial->screenOffset, glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), pMaterial->sizeScale.z, pMaterial->sizeScale.w), getAssignedRenderpassID(pMaterial));
+		if(pMaterial->isComputeShader())
+			pMaterial->updatePipeline(pMaterial->screenOffset, glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), pMaterial->sizeScale.z, pMaterial->sizeScale.w), getAssignedRenderpassID(pMaterial));
+		else
+			pMaterial->updatePipeline(pMaterial->screenOffset, glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), pMaterial->sizeScale.z, pMaterial->sizeScale.w), NULL);
+
 	}
+	
 
 	//postProcess
 	for (size_t i = 0; i < postProcessChain.size(); i++)
@@ -1082,29 +1529,21 @@ void Renderer::reCreateRenderer()
 
 	createGbufferFramebuffers();
 	createMainFramebuffers();
-
+	//createGUIFrameBuffers();
 
 	createGbufferCommandBuffers();
 	createFrustumCullingCommandBuffers();
 	createMainCommandBuffers();
+	//createGUICommandBuffers();
 
 	//record static CommandBuffers;
 	recordMainCommandBuffers();
+	//recordGUICommandBuffers();
 }
 
-void Renderer::releaseDepthResources()
-{
-	//depth
-	vkDestroySampler(vulkanApp->getDevice(), depthTexture->textureSampler, nullptr);
-	vkDestroyImage(vulkanApp->getDevice(), depthTexture->textureImage, nullptr);
-	vkDestroyImageView(vulkanApp->getDevice(), depthTexture->textureImageView, nullptr);
-	vkFreeMemory(vulkanApp->getDevice(), depthTexture->textureImageMemory, nullptr);
-}
 
-void Renderer::shutdownDepthResources()
-{
-	depthTexture->shutDown();
-}
+
+
 
 void Renderer::releaseRenderPart()
 {
@@ -1145,6 +1584,29 @@ void Renderer::releaseRenderPart()
 
 	releaseGbuffers();
 
+	/*
+	releaseGUICanvas();
+
+	for (size_t i = 0; i <  guiCmd.size(); i++)
+	{
+		vkFreeCommandBuffers(vulkanApp->getDevice(), guiCmdPool, 1, &guiCmd[i]);
+		guiCmd[i] = NULL;
+	}
+
+	guiCmd.clear();
+
+	gui.cleanUp();
+
+	for (size_t i = 0; i < guiFramebuffers.size(); i++)
+	{
+		vkDestroyFramebuffer(vulkanApp->getDevice(), guiFramebuffers[i], nullptr);
+		guiFramebuffers[i] = NULL;
+	}
+
+	guiFramebuffers.clear();
+	*/
+
+
 	for (size_t i = 0; i < mainCmd.size(); i++)
 	{
 		vkFreeCommandBuffers(vulkanApp->getDevice(), mainCmdPool, 1, &mainCmd[i]);
@@ -1180,6 +1642,7 @@ void Renderer::shutDown()
 {	
 	releaseRenderPart();
 	shutdownDepthResources();
+	shutdownSSRDepthResources();
 
 	AssetDatabase::GetInstance()->cleanUp();
 
@@ -1226,9 +1689,27 @@ void Renderer::shutDown()
 
 	vkDestroyBuffer(vulkanApp->getDevice(), pointLightUniformBuffer, nullptr);
 	vkFreeMemory(vulkanApp->getDevice(), pointLightUniformMemory, nullptr);
+
+	//delete[] SSROforReset;
+	delete[] SSRDforReset;
+
+	vkDestroyBuffer(vulkanApp->getDevice(), SSRDepthBuffer, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), SSRDepthBufferMemory, nullptr);
+
+	//vkDestroyBuffer(vulkanApp->getDevice(), SSROffsetBuffer, nullptr);
+	//vkFreeMemory(vulkanApp->getDevice(), SSROffsetBufferMemory, nullptr);
+
+	vkDestroyBuffer(vulkanApp->getDevice(), perFrameBuffer, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), perFrameBufferMemory, nullptr);
+
+	vkDestroyBuffer(vulkanApp->getDevice(), SSRInfoBuffer, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), SSRInfoBufferMem, nullptr);
 	
+	skySystem.shutDown();
+
 	DELETE_SAFE(vulkanApp);
 	
+
 	interface.shutDown();
 }
 
@@ -1241,6 +1722,40 @@ void Renderer::createSwapChainImageViews()
 		vulkanApp->createImageView(swapChainImages[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount, swapChainImageViews[i]);
 	}
 }
+
+/*
+void Renderer::createGUICanvas()
+{
+	guiCanvas.resize(1);
+
+	for (uint32_t i = 0; i < guiCanvas.size(); i++)
+	{
+		guiCanvas[i] = new Texture;
+		guiCanvas[i]->connectDevice(vulkanApp);
+		vulkanApp->createImage(VK_IMAGE_TYPE_2D, swapChainExtent.width, swapChainExtent.height, 1, 1, 1, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_SAMPLE_COUNT_1_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			guiCanvas[i]->textureImage, guiCanvas[i]->textureImageMemory);
+
+		vulkanApp->createImageView(guiCanvas[i]->textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount, guiCanvas[i]->textureImageView);
+
+		vulkanApp->createTextureSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_FALSE, 1, VK_BORDER_COLOR_INT_OPAQUE_BLACK, VK_FALSE,
+			VK_SAMPLER_MIPMAP_MODE_NEAREST, 0.0f, 0.0f, 0.0f, guiCanvas[i]->textureSampler);
+	}
+}
+
+void Renderer::createGUIFrameBuffers( )
+{
+	std::vector<VkImageView> guiImageViews;
+	guiImageViews.resize(guiCanvas.size());
+
+	for (size_t i = 0; i < guiImageViews.size(); i++)
+	{
+		guiImageViews[i] = guiCanvas[i]->textureImageView;
+	}
+
+	vulkanApp->createFramebuffers(guiImageViews, NULL, guiFramebuffers, gui.init_data.render_pass, swapChainExtent.width, swapChainExtent.height, layerCount, 1);
+}
+*/
 
 void Renderer::createGbuffers()
 {
@@ -1276,6 +1791,26 @@ void Renderer::updateGbuffers()
 			VK_SAMPLER_MIPMAP_MODE_NEAREST, 0.0f, 0.0f, 0.0f, gbuffers[i]->textureSampler);
 	}
 }
+
+/*
+void Renderer::releaseGUICanvas()
+{
+	for (size_t i = 0; i < guiCanvas.size(); i++)
+	{
+		guiCanvas[i]->shutDown();
+	}
+}
+
+void Renderer::deleteGUICanvas()
+{
+	for (size_t i = 0; i < guiCanvas.size(); i++)
+	{
+		guiCanvas[i]->shutDown();
+	}
+
+	guiCanvas.clear();
+}
+*/
 
 void Renderer::releaseGbuffers()
 {
@@ -1350,7 +1885,10 @@ void Renderer::createFrustumCullingCommandPool()
 
 void Renderer::createFrustumCullingCommandBuffers()
 {
-	vulkanApp->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, gbufferFramebuffers, frustumCmd, frustumCullingPool);
+	std::vector<VkFramebuffer> dummyFrameBuffer;
+	dummyFrameBuffer.resize(1);
+
+	vulkanApp->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, dummyFrameBuffer, frustumCmd, frustumCullingPool);
 }
 
 void Renderer::recordFrustumCullingCommandBuffers(int groupSizeX, int groupSizeY, int groupSizeZ)
@@ -1499,8 +2037,103 @@ void Renderer::createDepthResources()
 	
 	vulkanApp->transitionImageLayout(depthTexture->textureImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, gbufferCmdPool, vulkanApp->getTransferQueue());
 
-	vulkanApp->createTextureSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_FALSE, 1, VK_BORDER_COLOR_INT_OPAQUE_BLACK, VK_FALSE,
-		VK_SAMPLER_MIPMAP_MODE_LINEAR, 0.0f, 0.0f, 0.0f, depthTexture->textureSampler);
+	vulkanApp->createTextureSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_FALSE, 1, VK_BORDER_COLOR_INT_OPAQUE_BLACK, VK_FALSE,
+		VK_SAMPLER_MIPMAP_MODE_NEAREST, 0.0f, 0.0f, 0.0f, depthTexture->textureSampler);
+
+	/*
+	depthMipmapTexture->mipLevel = DEPTH_MIP_SIZE + 1;
+
+	vulkanApp->createImage(VK_IMAGE_TYPE_2D, swapChainExtent.width, swapChainExtent.height, 1, depthMipmapTexture->mipLevel, 1, VK_FORMAT_R32_SFLOAT, VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_SAMPLE_COUNT_1_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		depthMipmapTexture->textureImage, depthMipmapTexture->textureImageMemory);
+
+	vulkanApp->createImageView(depthMipmapTexture->textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1, depthMipmapTexture->textureImageView);
+
+	vulkanApp->transitionImageLayout(depthMipmapTexture->textureImage, VK_FORMAT_R32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, gbufferCmdPool, vulkanApp->getTransferQueue());
+
+	vulkanApp->createTextureSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_FALSE, 1, VK_BORDER_COLOR_INT_OPAQUE_BLACK, VK_FALSE,
+		VK_SAMPLER_MIPMAP_MODE_NEAREST, 0.0f, 0.0f, 0.0f, depthMipmapTexture->textureSampler);
+
+	for (size_t i = 0; i < depthMipSizeBuffer.size(); i++)
+	{
+		vulkanApp->createBuffer(sizeof(glm::vec4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			depthMipSizeBuffer[i], depthMipSizeBufferMemory[i]);
+	}
+	*/
+}
+
+void Renderer::releaseDepthResources()
+{
+	//depth
+	vkDestroySampler(vulkanApp->getDevice(), depthTexture->textureSampler, nullptr);
+	vkDestroyImage(vulkanApp->getDevice(), depthTexture->textureImage, nullptr);
+	vkDestroyImageView(vulkanApp->getDevice(), depthTexture->textureImageView, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), depthTexture->textureImageMemory, nullptr);
+
+	/*
+	vkDestroySampler(vulkanApp->getDevice(), depthMipmapTexture->textureSampler, nullptr);
+	vkDestroyImage(vulkanApp->getDevice(), depthMipmapTexture->textureImage, nullptr);
+	vkDestroyImageView(vulkanApp->getDevice(), depthMipmapTexture->textureImageView, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), depthMipmapTexture->textureImageMemory, nullptr);
+	
+	
+	for (size_t i = 0; i < depthMipSizeBuffer.size(); i++)
+	{
+		vkFreeMemory(vulkanApp->getDevice(), depthMipSizeBufferMemory[i], nullptr);
+
+		depthMipSizeBufferMemory[i] = NULL;
+
+		vkDestroyBuffer(vulkanApp->getDevice(), depthMipSizeBuffer[i], nullptr);		
+
+		depthMipSizeBuffer[i] = NULL;
+	}
+	*/
+}
+
+void Renderer::shutdownDepthResources()
+{
+	depthTexture->shutDown();
+
+	//depthMipmapTexture->shutDown();
+
+	/*
+	for (size_t i = 0; i < depthMipTexture.size(); i++)
+	{
+		depthMipTexture[i]->shutDown();		
+	}
+
+	for (size_t i = 0; i < depthMipSizeBuffer.size(); i++)
+	{
+		vkDestroyBuffer(vulkanApp->getDevice(), depthMipSizeBuffer[i], nullptr);
+		vkFreeMemory(vulkanApp->getDevice(), depthMipSizeBufferMemory[i], nullptr);
+	}
+	*/
+	
+}
+
+void Renderer::createSSRDepthResources()
+{
+	vulkanApp->createImage(VK_IMAGE_TYPE_2D, MAX_SCREEN_WIDTH, MAX_SCREEN_HEIGHT, 1, 1, 1, VK_FORMAT_R32_UINT, VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_USAGE_STORAGE_BIT , VK_SAMPLE_COUNT_1_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, SSRDepthTexture->textureImage, SSRDepthTexture->textureImageMemory);
+	vulkanApp->createImageView(SSRDepthTexture->textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R32_UINT, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1, SSRDepthTexture->textureImageView);
+
+	vulkanApp->transitionImageLayout(SSRDepthTexture->textureImage, VK_FORMAT_R32_UINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL, vulkanApp->getTransferCmdPool(), vulkanApp->getTransferQueue());
+
+	vulkanApp->createTextureSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_FALSE, 1, VK_BORDER_COLOR_INT_OPAQUE_BLACK, VK_FALSE,
+		VK_SAMPLER_MIPMAP_MODE_NEAREST, 0.0f, 0.0f, 0.0f, SSRDepthTexture->textureSampler);
+}
+
+void Renderer::releaseSSRDepthResources()
+{
+	vkDestroySampler(vulkanApp->getDevice(), SSRDepthTexture->textureSampler, nullptr);
+	vkDestroyImage(vulkanApp->getDevice(), SSRDepthTexture->textureImage, nullptr);
+	vkDestroyImageView(vulkanApp->getDevice(), SSRDepthTexture->textureImageView, nullptr);
+	vkFreeMemory(vulkanApp->getDevice(), SSRDepthTexture->textureImageMemory, nullptr);
+}
+
+void Renderer::shutdownSSRDepthResources()
+{
+	SSRDepthTexture->shutDown();
 }
 
 void Renderer::createGbufferFramebuffers()

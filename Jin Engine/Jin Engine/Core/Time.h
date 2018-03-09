@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 
+static unsigned int currentTime = 0;
 static unsigned int deltaTime = 0;
 static unsigned int previousTime = 0;
 

@@ -127,6 +127,42 @@ void Interface::getAsynckeyState()
 	{
 		bRight = true;
 	}
+
+	//Roughness
+	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET))
+	{
+		gRoughness -= 0.01f;
+
+		if (gRoughness < 0.01f)
+			gRoughness = 0.01f;
+
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET))
+	{
+		gRoughness += 0.01f;
+
+		if (gRoughness > 1.0f)
+			gRoughness = 1.0f;
+	}
+
+	//Intensity
+	if (glfwGetKey(window, GLFW_KEY_COMMA))
+	{
+		gIntensity -= 0.01f;
+
+		if (gIntensity < 0.00f)
+			gIntensity = 0.00f;
+
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_PERIOD))
+	{
+		gIntensity += 0.01f;
+
+		if (gIntensity > 2.0f)
+			gIntensity = 2.0f;
+	}
 }
 
 void Interface::shutDown()

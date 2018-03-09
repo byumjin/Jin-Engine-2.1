@@ -17,6 +17,7 @@ layout(set = 0, binding = 5) uniform cameraBuffer
 	mat4 InvViewProjMat;
 
 	vec4 cameraWorldPos;
+	vec4 viewPortSize;
 };
 
 struct LightInfo
@@ -147,7 +148,7 @@ void main()
 		vec3 ViewVec = normalize(cameraWorldPos.xyz - worldPos.xyz); 
 		vec3 HalfVec = normalize(ViewVec + LightVec);				
 
-		vec3 ReflectVec = -reflect(ViewVec, NormalVec);
+		vec3 ReflectVec = reflect(-ViewVec, NormalVec);
 
 		//Physically-based shader			
 		if (NoL > 0.0f && lightAtt > 0.0)
@@ -177,7 +178,7 @@ void main()
 	}
 
 	resultColor += vec3(EmissiveMap.xyz);	
-	outColor = vec4(resultColor, EmissiveMap.w);
+	outColor = vec4(resultColor, depth);
 
 	//outColor = texture(basicGbuffer, fragUV);
     //outColor = (texture(normalGbuffere, fragUV) + vec4(1.0)) * 0.5;

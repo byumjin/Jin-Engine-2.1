@@ -14,7 +14,7 @@ public:
 	~Camera();
 
 	void setCamera(Vulkan *pVulkanApp, glm::vec3 eyePositionParam, glm::vec3 focusPositionParam, glm::vec3 upVectorParam, float fovYParam, float width, float height, float nearParam, float farParam);
-	void updateAspectRatio(float aspectRatio);
+	void updateAspectRatio(float aspectRatio, glm::vec4 viewPortSizeParam);
 
 	virtual void updateOrbit(float deltaX, float deltaY, float deltaZ);
 	virtual void updatePosition(float deltaX, float deltaY, float deltaZ);
@@ -43,6 +43,8 @@ public:
 	float fovY;
 	float aspectRatio;
 	float focalDistance;
+
+	glm::vec4 viewPortSize;
 
 	cameraBuffer cameraBufferInfo;
 

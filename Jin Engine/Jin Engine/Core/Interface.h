@@ -3,12 +3,9 @@
 #include "Common.h"
 #include "Time.h"
 
-
 static bool leftMouseDown = false;
 static bool rightMouseDown = false;
 static bool middleMouseDown = false;
-
-
 
 class Interface
 {
@@ -33,6 +30,11 @@ public:
 		bRight = false;
 
 		windowResetFlag = false;
+
+		//SSR
+		gRoughness = 0.0f;
+		gIntensity = 0.4f;
+
 	}
 
 	void shutDown();
@@ -79,6 +81,10 @@ public:
 	int window_Height;
 
 	bool windowResetFlag;
+
+	//SSR
+	float gRoughness;
+	float gIntensity;
 
 private:
 	GLFWwindow* window;

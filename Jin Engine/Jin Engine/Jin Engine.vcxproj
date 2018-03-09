@@ -162,7 +162,12 @@
     <ClCompile Include="Core\Interface.cpp" />
     <ClCompile Include="Core\Vulkan.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Render\Postprocess.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
+    <ClCompile Include="UI\imgui.cpp" />
+    <ClCompile Include="UI\imgui_demo.cpp" />
+    <ClCompile Include="UI\imgui_draw.cpp" />
+    <ClCompile Include="UI\imgui_impl_glfw_vulkan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
@@ -182,6 +187,14 @@
     <ClInclude Include="Core\Vulkan.h" />
     <ClInclude Include="Render\Postprocess.h" />
     <ClInclude Include="Render\Renderer.h" />
+    <ClInclude Include="UI\GUI.h" />
+    <ClInclude Include="UI\imconfig.h" />
+    <ClInclude Include="UI\imgui.h" />
+    <ClInclude Include="UI\imgui_impl_glfw_vulkan.h" />
+    <ClInclude Include="UI\imgui_internal.h" />
+    <ClInclude Include="UI\stb_rect_pack.h" />
+    <ClInclude Include="UI\stb_textedit.h" />
+    <ClInclude Include="UI\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shader\gbuffers.frag">
@@ -278,7 +291,93 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Shader\SSR.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\depthMipmap.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="Shader\sky.frag">
+      <FileType>Document</FileType>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\SSRR.frag">
+      <FileType>Document</FileType>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\compositePostProcess.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\SSRP.comp">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\horizontalBlur.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="Shader\verticalBlur.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(ProjectName)\%(Identity).spv</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shader\holePatching.frag">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VULKAN_SDK)\Bin\glslangValidator -V -o %(Identity).spv %(Identity)</Command>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>

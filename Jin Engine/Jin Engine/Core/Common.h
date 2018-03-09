@@ -7,6 +7,11 @@
 #include <set>
 #include <fstream>
 #include <chrono>
+#include <string>
+
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -67,12 +72,40 @@ struct cameraBuffer
 	glm::mat4 InvViewProjMat;
 
 	glm::vec4 cameraWorldPos;
+	glm::vec4 viewPortSize;
 
 };
 
 struct perframeBuffer
 {
-	glm::vec4 time; //x - totalTime, y - deltaTime
+	glm::vec4 timeInfo; //x - totalTime, y - deltaTime
+};
+
+struct PlaneInfo
+{
+	glm::mat4 rotMat;
+	glm::vec4 centerPoint;
+	glm::vec4 size;
+};
+
+#define MAX_PLANES 4
+
+struct PlaneInfoPack
+{	
+	PlaneInfo planeInfo[MAX_PLANES];
+	uint32_t numPlanes;
+	uint32_t pad00;
+	uint32_t pad01;
+	uint32_t pad02;
+};
+
+struct SSRDepthInfo
+{
+	glm::vec4 depth;
+	//uint32_t order;
+	//uint32_t pad00;
+	//uint32_t pad01;
+	//uint32_t pad02;
 };
 
 enum GBUFFER
@@ -83,4 +116,19 @@ enum GBUFFER
 #define NUM_GBUFFERS 4
 #define MAX_CULLING 1024
 
+
 #define USE_GPU_CULLING 1
+
+#define DEPTH_MIP_POSTPROCESS 0
+#define DEPTH_MIP_SIZE 8
+
+#define MAX_SCREEN_WIDTH 1920
+#define MAX_SCREEN_HEIGHT 1080
+
+static void check_vk_result(VkResult err)
+{
+	if (err == 0) return;
+	printf("VkResult %d\n", err);
+	if (err < 0)
+		abort();
+}

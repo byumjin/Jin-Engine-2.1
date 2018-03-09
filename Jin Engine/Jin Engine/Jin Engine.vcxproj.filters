@@ -20,6 +20,9 @@
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{45415893-4ce1-4bdf-abbe-5f3d6aa15337}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{8f514f6b-41bf-4c39-a46c-0475a5d8efc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +57,21 @@
     </ClCompile>
     <ClCompile Include="Actor\Object.cpp">
       <Filter>Source Files\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Postprocess.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\imgui.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\imgui_demo.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\imgui_draw.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\imgui_impl_glfw_vulkan.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +126,30 @@
     <ClInclude Include="Render\Postprocess.h">
       <Filter>Source Files\Render</Filter>
     </ClInclude>
+    <ClInclude Include="UI\imconfig.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\imgui.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\imgui_internal.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\stb_rect_pack.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\stb_textedit.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\stb_truetype.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\imgui_impl_glfw_vulkan.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\GUI.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shader\gbuffers.vert">
@@ -125,18 +167,42 @@
     <CustomBuild Include="Shader\frustumCulling.comp">
       <Filter>Source Files\Shader</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shader\postProcess.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\postProcess.vert">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\toneMapping.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\SSR.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\depthMipmap.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\sky.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\SSRR.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\compositePostProcess.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\horizontalBlur.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\SSRP.comp">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shader\verticalBlur.frag">
+      <Filter>Source Files\Shader</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\postProcess.frag">
-      <Filter>Source Files\Shader</Filter>
-    </None>
-    <None Include="Shader\postProcess.vert">
-      <Filter>Source Files\Shader</Filter>
-    </None>
-    <None Include="Shader\toneMapping.frag">
-      <Filter>Source Files\Shader</Filter>
-    </None>
-    <None Include="Shader\sky.frag">
+    <None Include="Shader\holePatching.frag">
       <Filter>Source Files\Shader</Filter>
     </None>
   </ItemGroup>

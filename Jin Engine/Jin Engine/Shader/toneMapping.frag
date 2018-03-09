@@ -148,7 +148,7 @@ vec3 RGBtoHSL(vec3 RGB)
 
 void main()
  {
-	vec3 toneMappedColor = (texture(SceneTexture, fragUV).xyz /* + texture(bloomMap, fragUV).xyz*/ ) * ColorTemperatureToRGB(3600.0);
+	vec3 toneMappedColor = (texture(SceneTexture, fragUV).xyz /* + texture(bloomMap, fragUV).xyz*/ ) * ColorTemperatureToRGB( 5200.0 /*3600.0*/);
 	outColor = vec4( RomBinDaHouseToneMapping(toneMappedColor), 1.0);
 
 	// Apply contrast

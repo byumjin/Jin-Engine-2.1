@@ -2,8 +2,6 @@
 
 #include "Interface.h"
 
-
-
 struct QueueFamilyIndices
 {
 	int graphicsFamily = -1;	
@@ -62,8 +60,8 @@ public:
 	Vulkan();
 	~Vulkan();
 	void initialize(Interface &interface);
+	
 	void shutDown();
-
 
 	void createInstance(const char* engineName, int major, int minor, int patch);
 	std::vector<const char*> getRequiredExtensions();
@@ -120,6 +118,23 @@ public:
 	VkCommandBuffer beginSingleTimeCommands(VkCommandPool commandPool);
 	void endSingleTimeCommands(VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkQueue queue);
 
+	void createBufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize size, VkBufferView bufferView)
+	{
+		VkBufferViewCreateInfo view_info = {};
+		view_info.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+		view_info.pNext = NULL;
+		view_info.buffer = buffer;
+		view_info.format = format;
+		view_info.offset = offset;
+		view_info.range = size;
+		vkCreateBufferView(device, &view_info, NULL, &bufferView);
+	}
+
+	void destroyBufferView(VkBufferView bufferView)
+	{
+		vkDestroyBufferView(device, bufferView, NULL);
+		bufferView = NULL;
+	}
 
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandPool cmdPool, VkQueue queue);
@@ -132,11 +147,20 @@ public:
 		vkUnmapMemory(device, deviceMemory);
 	}
 
+	void bufferMemoryBarrier(VkBuffer buffer, VkDeviceSize size, VkAccessFlags src, VkAccessFlags dst, VkCommandPool commandPool, VkQueue queue);
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkQueue queue);
-
+	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkQueue queue, VkImageSubresourceRange subresourceRange);
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevel);
 
-	void createImage(VkImageType type, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevelParam, uint32_t arrayLayersParam,
+	void blitImage(VkImage srcImage, VkImageLayout srcLayout, VkImage dstImage, VkImageLayout dstLayout, uint32_t regionCount, VkFilter filter, VkImageBlit imageBlit, VkCommandPool commandPool, VkQueue queue)
+	{
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands(commandPool);
+		vkCmdBlitImage(commandBuffer, srcImage,	srcLayout, dstImage, dstLayout, regionCount, &imageBlit, filter);
+
+		endSingleTimeCommands(commandPool, commandBuffer, queue);
+	}
+
+	VkDeviceSize createImage(VkImageType type, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevelParam, uint32_t arrayLayersParam,
 		VkFormat format, VkImageTiling tiling, VkImageLayout imageLayout, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount,
 		VkMemoryPropertyFlags properties,
 		VkImage& image, VkDeviceMemory& imageMemory);

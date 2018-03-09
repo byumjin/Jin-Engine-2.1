@@ -1,8 +1,9 @@
 #include "Camera.h"
 
-Camera::Camera(): focusPosition(glm::vec3(0.0f, 3.0f, 0.0f)), focalDistance(10.0f)
+Camera::Camera():focalDistance(10.0f)
 {
-	position = glm::vec3(0.0f, 3.0f, 5.0f);
+	focusPosition = glm::vec3(-1.0f, 2.0f, 0.0f);
+	position = glm::vec3(5.0f, 2.0f, 0.0f);
 	upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
@@ -25,14 +26,13 @@ void Camera::setCamera(Vulkan *pVulkanApp, glm::vec3 eyePositionParam, glm::vec3
 
 	aspectRatio = width / height;
 
-	//lookVector = glm::normalize(focusPosition - position);
+	viewPortSize = glm::vec4(width, height, 0.0, 0.0);
 
-	updateViewMatrix(glm::lookAt(position, focusPosition, upVector));
-	//updateProjectionMatrix();
+	updateViewMatrix(glm::lookAtRH(position, focusPosition, upVector));
 
 	createCameraBuffer();
 
-	updateAspectRatio(aspectRatio);
+	updateAspectRatio(aspectRatio, viewPortSize);
 }
 
 void Camera::updateViewMatrix(const glm::mat4 &viewMatParam)
@@ -58,10 +58,10 @@ void Camera::updateViewProjectionMatrix()
 	InvViewProjMat = glm::inverse(viewProjMat);
 }
 
-void Camera::updateAspectRatio(float aspectRatioParam)
+void Camera::updateAspectRatio(float aspectRatioParam, glm::vec4 viewPortSizeParam)
 {
 	aspectRatio = aspectRatioParam;
-
+	viewPortSize = viewPortSizeParam;
 	updateProjectionMatrix();
 	updateViewProjectionMatrix();
 
@@ -71,8 +71,24 @@ void Camera::updateAspectRatio(float aspectRatioParam)
 void Camera::updateOrbit(float deltaX, float deltaY, float deltaZ)
 {
 	Actor::updateOrbit(deltaX, deltaY, deltaZ);
+	/*
+	lookVector = -glm::vec3(modelMat[2].x, modelMat[2].y, modelMat[2].z);
+	
+	if (glm::dot(-lookVector, glm::vec3(0.0, 1.0, 0.0)) > 0.99)
+	{
+		upVector = glm::vec3(0.0, 0.0, -1.0);
+	}
+	else
+	{
+		upVector = glm::vec3(0.0, 1.0, 0.0);
+	}
 
+	focusPosition = position + lookVector;
+
+	updateViewMatrix(glm::lookAtRH(position, focusPosition, upVector));
+	*/
 	updateViewMatrix(glm::inverse(modelMat));
+
 	updateViewProjectionMatrix();
 
 	updateCameraBuffer();
@@ -82,6 +98,8 @@ void Camera::updatePosition(float deltaX, float deltaY, float deltaZ)
 {
 	Actor::updatePosition(deltaX, deltaY, deltaZ);
 
+	//focusPosition = position + lookVector;
+	//updateViewMatrix(glm::lookAtRH(position, position + lookVector, upVector));
 	updateViewMatrix(glm::inverse(modelMat));
 	updateViewProjectionMatrix();
 
@@ -122,6 +140,7 @@ void Camera::updateCameraBuffer()
 	cameraBufferInfo.InvViewProjMat = InvViewProjMat;
 
 	cameraBufferInfo.cameraWorldPos = glm::vec4(position, 1.0);
+	cameraBufferInfo.viewPortSize = viewPortSize;
 
 	vulkanApp->updateBuffer(&cameraBufferInfo, uniformCameraBufferMemory, sizeof(cameraBuffer));
 }
