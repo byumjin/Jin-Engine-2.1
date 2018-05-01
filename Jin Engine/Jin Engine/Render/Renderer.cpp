@@ -452,8 +452,8 @@ void Renderer::setGlobalObjs()
 			Lion->updateObjectBuffer();
 			//Lion->bRoll = true;
 			//Texture			
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_specular.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_specular.png");
 			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Default_Normal.tga");
 			//AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.tga");
 
@@ -463,7 +463,7 @@ void Renderer::setGlobalObjs()
 
 			//Lion
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("LionStatue_Mat", "Asset/Texture/lionhh/lion_albedo.tga", "Asset/Texture/lionhh/lion_specular.tga",
+			temp_Gbuffer_Mat->createPipeline("LionStatue_Mat", "Asset/Texture/lionhh/lion_albedo.png", "Asset/Texture/lionhh/lion_specular.png",
 				"Asset/Texture/Default_Normal.tga", "Asset/Texture/sponza/no_emis.tga",
 				&Lion->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
