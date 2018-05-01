@@ -13,3 +13,8 @@
 - Num 2 : Change Rednering Mode
 - [ , ] : Change Roughness of Reflector -/+
 - < , > : Change Intensity of SSR -/+
+
+## Thesis
+
+- [Thesis](https://github.com/byumjin/Jin-Engine-2.1/blob/master/%5BByumjin%20Kim%5D%20Master%20Thesis_Final.pdf)
+- [Slides](https://github.com/byumjin/Jin-Engine-2.1/blob/master/IMPLEMENTATION%20OF%20OPTIMIZED%20PIXEL-PROJECTED%20REFLECTIONS%20FOR%20PLANAR%20REFLECTORS.pdf)
