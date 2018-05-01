@@ -873,10 +873,10 @@ void ScreenSpaceProjectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[0].descriptorCount = 1;
 
-	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 	descPoolSize[1].descriptorCount = 1;
 
-	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[2].descriptorCount = 1;
 
 	descPoolSize[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -901,14 +901,14 @@ void ScreenSpaceProjectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 	ImageInfos.resize(textures.size());
 
 	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
-	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[1]->textureImageView, textures[1]->textureSampler);
+	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_GENERAL, textures[1]->textureImageView, textures[1]->textureSampler);
+	createImageInfo(ImageInfos[2], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[2]->textureImageView, textures[2]->textureSampler);
 
 	std::vector<VkDescriptorBufferInfo> bufferInfos;
 	bufferInfos.resize(buffers.size());
 
-	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);
-	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(cameraBuffer));
-	createBufferInfo(bufferInfos[2], *buffers[2], 0, sizeof(PlaneInfoPack));
+	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(PlaneInfoPack));
 	
 	
 
@@ -923,10 +923,10 @@ void ScreenSpaceProjectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 
 	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr, NULL);
 	createDescriptorWrite(descriptorWrites[1], 1, 1, descPoolSize[1].type, &ImageInfos[1], nullptr, NULL);
-	
-	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, nullptr, &bufferInfos[0], NULL);
-	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, nullptr, &bufferInfos[1], NULL);
-	createDescriptorWrite(descriptorWrites[4], 4, 4, descPoolSize[4].type, nullptr, &bufferInfos[2], NULL);
+	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, &ImageInfos[2], nullptr, NULL);
+
+	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[4], 4, 4, descPoolSize[4].type, nullptr, &bufferInfos[1], NULL);
 
 	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
@@ -945,6 +945,7 @@ void ScreenSpaceProjectionMaterial::createPipeline(std::string name,
 	createLocalBuffer();
 
 	addTexture((*renderTarget)[0]); //Scene
+	addTexture((*renderTarget)[1]); //image
 	addTexture(pDepthImageView);
 
 	addBuffer(cameraBuffer);
@@ -955,15 +956,149 @@ void ScreenSpaceProjectionMaterial::createPipeline(std::string name,
 	createDescriptor(ScreenOffsets, SizeScale);
 
 	createComputePipeline();
-
 }
-
-
 
 void ScreenSpaceProjectionMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
 {
 	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
 	createComputePipeline();
+}
+
+
+/////////////////////////////////////////////////// SSP2 //////////////////////////////////////////////
+
+
+void ScreenSpaceProjectionMaterial2::createLocalBuffer()
+{
+	vulkanApp->createBuffer(sizeof(PlaneInfoPack), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		planeInfoBuffer, planeInfoBufferMem);
+}
+
+void ScreenSpaceProjectionMaterial2::updatePlaneInfoPackBuffer(PlaneInfoPack &planeInfoPack)
+{
+	VkDeviceSize bufferSize = sizeof(PlaneInfoPack);
+
+	void* data;
+	vkMapMemory(vulkanApp->getDevice(), planeInfoBufferMem, 0, bufferSize, 0, &data);
+	memcpy(data, &planeInfoPack, static_cast<size_t>(bufferSize));
+	vkUnmapMemory(vulkanApp->getDevice(), planeInfoBufferMem);
+}
+
+void ScreenSpaceProjectionMaterial2::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam)
+{
+	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
+
+	std::vector<VkDescriptorPoolSize> descPoolSize;
+	descPoolSize.resize(5);
+
+	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[0].descriptorCount = 1;
+
+	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	descPoolSize[1].descriptorCount = 1;
+
+	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[2].descriptorCount = 1;
+
+	descPoolSize[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[3].descriptorCount = 1;
+
+	descPoolSize[4].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[4].descriptorCount = 1;
+
+	createDescriptorPool(descPoolSize);
+
+	std::vector<VkDescriptorSetLayoutBinding> descLayoutBinding;
+	descLayoutBinding.resize(descPoolSize.size());
+
+	for (uint32_t i = 0; i < static_cast<uint32_t>(descLayoutBinding.size()); i++)
+	{
+		createLayoutBinding(descLayoutBinding[i], i, descPoolSize[i].descriptorCount, descPoolSize[i].type, VK_SHADER_STAGE_FRAGMENT_BIT);
+	}
+
+	createDescriptorSetLayout(descLayoutBinding);
+
+	std::vector<VkDescriptorImageInfo> ImageInfos;
+	ImageInfos.resize(textures.size());
+
+	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
+	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_GENERAL, textures[1]->textureImageView, textures[1]->textureSampler);
+	createImageInfo(ImageInfos[2], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[2]->textureImageView, textures[2]->textureSampler);
+
+	std::vector<VkDescriptorBufferInfo> bufferInfos;
+	bufferInfos.resize(buffers.size());
+
+	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(PlaneInfoPack));
+
+
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+	descriptorSetLayouts.resize(1);
+	descriptorSetLayouts[0] = descriptorSetLayout;
+
+	createDescriptorSet(descriptorSetLayouts);
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descPoolSize.size());
+
+	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[1], 1, 1, descPoolSize[1].type, &ImageInfos[1], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, &ImageInfos[2], nullptr, NULL);
+
+	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[4], 4, 4, descPoolSize[4].type, nullptr, &bufferInfos[1], NULL);
+
+	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void ScreenSpaceProjectionMaterial2::createPipeline(std::string name,
+	std::string albedo, std::string specular, std::string normal, std::string emissive,
+	VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+	glm::vec2 ScreenOffsets, glm::vec4 SizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
+{
+	AssetDatabase::GetInstance()->materialList.push_back(name);
+	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
+
+	LoadFromFilename(vulkanApp, name);
+
+	createLocalBuffer();
+
+	addTexture((*renderTarget)[0]); //Scene
+	addTexture((*renderTarget)[1]); //image
+	addTexture(pDepthImageView);
+
+	addBuffer(cameraBuffer);
+	addBuffer(&planeInfoBuffer);
+
+
+	setShaderPaths("Shader/postProcess.vert.spv", "Shader/SSRP.frag.spv", "", "", "", "");
+	createDescriptor(ScreenOffsets, SizeScale);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	//colorBlendAttachments.resize(1);
+	colorBlendAttachments.resize(0);
+
+
+	//createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+void ScreenSpaceProjectionMaterial2::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+{
+	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
+	
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
 }
 
 /////////////////////////////////////////////////// SSR ///////////////////////////////////////////////////////
@@ -977,16 +1112,8 @@ void ScreenSpaceReflectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 
 	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[0].descriptorCount = 1;
-
-	/*
-	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	descPoolSize[1].descriptorCount = 1;
-
-	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	descPoolSize[2].descriptorCount = 1;
-	*/
-
-	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	
+	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 	descPoolSize[1].descriptorCount = 1;
 
 	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -1001,13 +1128,13 @@ void ScreenSpaceReflectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 	descPoolSize[5].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[5].descriptorCount = 1;
 
-	descPoolSize[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[6].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[6].descriptorCount = 1;
 
 	descPoolSize[7].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descPoolSize[7].descriptorCount = 1;
 
-	descPoolSize[8].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	descPoolSize[8].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descPoolSize[8].descriptorCount = 1;
 
 	descPoolSize[9].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -1028,23 +1155,19 @@ void ScreenSpaceReflectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 	ImageInfos.resize(textures.size());
 
 	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
-	//createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[1]->textureImageView, textures[1]->textureSampler);
-	//createImageInfo(ImageInfos[2], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[2]->textureImageView, textures[2]->textureSampler);
-	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[1]->textureImageView, textures[1]->textureSampler);
+	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_GENERAL, textures[1]->textureImageView, textures[1]->textureSampler);
 	createImageInfo(ImageInfos[2], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[2]->textureImageView, textures[2]->textureSampler);
 	createImageInfo(ImageInfos[3], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[3]->textureImageView, textures[3]->textureSampler);
 	createImageInfo(ImageInfos[4], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[4]->textureImageView, textures[4]->textureSampler);
 	createImageInfo(ImageInfos[5], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[5]->textureImageView, textures[5]->textureSampler);
+	createImageInfo(ImageInfos[6], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[6]->textureImageView, textures[6]->textureSampler);
 
 	std::vector<VkDescriptorBufferInfo> bufferInfos;
 	bufferInfos.resize(buffers.size());
 
-	//createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(SSRDepthInfo) * (MAX_SCREEN_WIDTH / (uint32_t)sizeScale.z)* (MAX_SCREEN_HEIGHT / (uint32_t)sizeScale.w));
-	//createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(uint32_t) * (MAX_SCREEN_WIDTH / (uint32_t)sizeScale.z)* (MAX_SCREEN_HEIGHT / (uint32_t)sizeScale.w));
 	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(PlaneInfoPack));
 	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(glm::vec4));
-	createBufferInfo(bufferInfos[2], *buffers[2], 0, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);
-	createBufferInfo(bufferInfos[3], *buffers[3], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[2], *buffers[2], 0, sizeof(cameraBuffer));
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 	descriptorSetLayouts.resize(1);
@@ -1061,14 +1184,13 @@ void ScreenSpaceReflectionMaterial::createDescriptor(glm::vec2 screenOffsetParam
 	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, &ImageInfos[3], nullptr, NULL);
 	createDescriptorWrite(descriptorWrites[4], 4, 4, descPoolSize[4].type, &ImageInfos[4], nullptr, NULL);
 	createDescriptorWrite(descriptorWrites[5], 5, 5, descPoolSize[5].type, &ImageInfos[5], nullptr, NULL);
-
-	//createDescriptorWrite(descriptorWrites[6], 6, 6, descPoolSize[6].type, &ImageInfos[6], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[6], 6, 6, descPoolSize[6].type, &ImageInfos[6], nullptr, NULL);
 	//createDescriptorWrite(descriptorWrites[7], 7, 7, descPoolSize[7].type, &ImageInfos[7], nullptr, NULL);
 	
-	createDescriptorWrite(descriptorWrites[6], 6, 6, descPoolSize[6].type, nullptr, &bufferInfos[0], NULL);
-	createDescriptorWrite(descriptorWrites[7], 7, 7, descPoolSize[7].type, nullptr, &bufferInfos[1], NULL);
-	createDescriptorWrite(descriptorWrites[8], 8, 8, descPoolSize[8].type, nullptr, &bufferInfos[2], NULL);
-	createDescriptorWrite(descriptorWrites[9], 9, 9, descPoolSize[9].type, nullptr, &bufferInfos[3], NULL);
+	
+	createDescriptorWrite(descriptorWrites[7], 7, 7, descPoolSize[7].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[8], 8, 8, descPoolSize[8].type, nullptr, &bufferInfos[1], NULL);
+	createDescriptorWrite(descriptorWrites[9], 9, 9, descPoolSize[9].type, nullptr, &bufferInfos[2], NULL);
 
 	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
@@ -1247,13 +1369,16 @@ void HolePatchingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::ve
 	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
 
 	std::vector<VkDescriptorPoolSize> descPoolSize;
-	descPoolSize.resize(2);
+	descPoolSize.resize(3);
 
 	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[0].descriptorCount = 1;
 
 	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descPoolSize[1].descriptorCount = 1;
+
+	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[2].descriptorCount = 1;
 
 	createDescriptorPool(descPoolSize);
 
@@ -1274,7 +1399,8 @@ void HolePatchingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::ve
 	std::vector<VkDescriptorBufferInfo> bufferInfos;
 	bufferInfos.resize(buffers.size());
 
-	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(glm::vec4));
+	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(cameraBuffer));
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 	descriptorSetLayouts.resize(1);
@@ -1287,6 +1413,7 @@ void HolePatchingMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::ve
 
 	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr, NULL);
 	createDescriptorWrite(descriptorWrites[1], 1, 1, descPoolSize[1].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, nullptr, &bufferInfos[1], NULL);
 
 	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
@@ -1324,6 +1451,158 @@ void HolePatchingMaterial::createPipeline(std::string name, std::string albedo, 
 }
 
 void HolePatchingMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
+{
+	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+
+void BruteForceMaterial::createLocalBuffer()
+{
+	vulkanApp->createBuffer(sizeof(PlaneInfoPack), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		planeInfoBuffer, planeInfoBufferMem);
+}
+
+void BruteForceMaterial::updatePlaneInfoPackBuffer(PlaneInfoPack &planeInfoPack)
+{
+	VkDeviceSize bufferSize = sizeof(PlaneInfoPack);
+
+	void* data;
+	vkMapMemory(vulkanApp->getDevice(), planeInfoBufferMem, 0, bufferSize, 0, &data);
+	memcpy(data, &planeInfoPack, static_cast<size_t>(bufferSize));
+	vkUnmapMemory(vulkanApp->getDevice(), planeInfoBufferMem);
+}
+
+
+void BruteForceMaterial::createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam)
+{
+	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
+
+	std::vector<VkDescriptorPoolSize> descPoolSize;
+	descPoolSize.resize(8);
+
+	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[0].descriptorCount = 1;
+
+	descPoolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[1].descriptorCount = 1;
+
+	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[2].descriptorCount = 1;
+
+	descPoolSize[3].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descPoolSize[3].descriptorCount = 1;
+
+	descPoolSize[4].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; // depth
+	descPoolSize[4].descriptorCount = 1;
+	
+	descPoolSize[5].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[5].descriptorCount = 1;
+	
+	descPoolSize[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[6].descriptorCount = 1;
+
+	descPoolSize[7].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[7].descriptorCount = 1;
+	
+
+	createDescriptorPool(descPoolSize);
+
+	std::vector<VkDescriptorSetLayoutBinding> descLayoutBinding;
+	descLayoutBinding.resize(descPoolSize.size());
+
+	for (uint32_t i = 0; i < static_cast<uint32_t>(descLayoutBinding.size()); i++)
+	{
+		createLayoutBinding(descLayoutBinding[i], i, descPoolSize[i].descriptorCount, descPoolSize[i].type, VK_SHADER_STAGE_FRAGMENT_BIT);
+	}
+	createDescriptorSetLayout(descLayoutBinding);
+
+	std::vector<VkDescriptorImageInfo> ImageInfos;
+	ImageInfos.resize(textures.size());
+
+	createImageInfo(ImageInfos[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[0]->textureImageView, textures[0]->textureSampler);
+	createImageInfo(ImageInfos[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[1]->textureImageView, textures[1]->textureSampler);
+	createImageInfo(ImageInfos[2], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[2]->textureImageView, textures[2]->textureSampler);
+	createImageInfo(ImageInfos[3], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[3]->textureImageView, textures[3]->textureSampler);
+	createImageInfo(ImageInfos[4], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, textures[4]->textureImageView, textures[4]->textureSampler);
+
+
+	std::vector<VkDescriptorBufferInfo> bufferInfos;
+	bufferInfos.resize(buffers.size());
+
+	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(glm::vec4));
+	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[2], *buffers[2], 0, sizeof(PlaneInfoPack));
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+	descriptorSetLayouts.resize(1);
+	descriptorSetLayouts[0] = descriptorSetLayout;
+
+	createDescriptorSet(descriptorSetLayouts);
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descPoolSize.size());
+
+	createDescriptorWrite(descriptorWrites[0], 0, 0, descPoolSize[0].type, &ImageInfos[0], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[1], 1, 1, descPoolSize[1].type, &ImageInfos[1], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, &ImageInfos[2], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, &ImageInfos[3], nullptr, NULL);
+	createDescriptorWrite(descriptorWrites[4], 4, 4, descPoolSize[4].type, &ImageInfos[4], nullptr, NULL);
+
+	createDescriptorWrite(descriptorWrites[5], 5, 5, descPoolSize[5].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[6], 6, 6, descPoolSize[6].type, nullptr, &bufferInfos[1], NULL);
+	createDescriptorWrite(descriptorWrites[7], 7, 7, descPoolSize[7].type, nullptr, &bufferInfos[2], NULL);
+
+	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void BruteForceMaterial::createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+	VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+	glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView)
+{
+	numPointLights = static_cast<uint32_t>(numPointLight);
+	numDirectionalLights = static_cast<uint32_t>(numDirectionalLight);
+
+	
+
+	AssetDatabase::GetInstance()->materialList.push_back(name);
+	AssetDatabase::GetInstance()->SaveAsset<Material>(this, name);
+
+	LoadFromFilename(vulkanApp, name);
+
+	createLocalBuffer();
+
+	for (size_t i = 0; i < renderTarget->size(); i++)
+	{
+		addTexture((*renderTarget)[i]);
+	}
+
+	addTexture(pDepthImageView);
+
+	addBuffer(cameraBuffer);
+	addBuffer(&planeInfoBuffer);
+
+	setShaderPaths("Shader/postProcess.vert.spv", "Shader/SSR.frag.spv", "", "", "", "");
+
+	createDescriptor(ScreenOffsets, sizeScale);
+
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+	colorBlendAttachments.resize(1);
+
+	createColorBlendAttachmentState(colorBlendAttachments[0], VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD);
+
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	createGraphicsPipeline(VK_POLYGON_MODE_FILL, 1.0f, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_SAMPLE_COUNT_1_BIT, colorBlendAttachments, VK_FALSE, depthStencil, 0.0f, renderPass);
+}
+
+void BruteForceMaterial::updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass)
 {
 	createDescriptor(screenOffsetParam, sizeScalescreenOffsetParam);
 
@@ -1530,7 +1809,7 @@ void CompositePostProcessMaterial::createDescriptor(glm::vec2 screenOffsetParam,
 	Material::createDescriptor(screenOffsetParam, sizeScaleParam);
 
 	std::vector<VkDescriptorPoolSize> descPoolSize;
-	descPoolSize.resize(3);
+	descPoolSize.resize(4);
 
 	descPoolSize[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descPoolSize[0].descriptorCount = 1;
@@ -1540,6 +1819,9 @@ void CompositePostProcessMaterial::createDescriptor(glm::vec2 screenOffsetParam,
 
 	descPoolSize[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descPoolSize[2].descriptorCount = 1;
+
+	descPoolSize[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descPoolSize[3].descriptorCount = 1;
 
 	createDescriptorPool(descPoolSize);
 
@@ -1561,7 +1843,9 @@ void CompositePostProcessMaterial::createDescriptor(glm::vec2 screenOffsetParam,
 	std::vector<VkDescriptorBufferInfo> bufferInfos;
 	bufferInfos.resize(buffers.size());
 
-	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(cameraBuffer));
+	createBufferInfo(bufferInfos[0], *buffers[0], 0, sizeof(uint32_t));
+	createBufferInfo(bufferInfos[1], *buffers[1], 0, sizeof(cameraBuffer));
+	
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 	descriptorSetLayouts.resize(1);
@@ -1576,6 +1860,7 @@ void CompositePostProcessMaterial::createDescriptor(glm::vec2 screenOffsetParam,
 	createDescriptorWrite(descriptorWrites[1], 1, 1, descPoolSize[1].type, &ImageInfos[1], nullptr, NULL);
 
 	createDescriptorWrite(descriptorWrites[2], 2, 2, descPoolSize[2].type, nullptr, &bufferInfos[0], NULL);
+	createDescriptorWrite(descriptorWrites[3], 3, 3, descPoolSize[3].type, nullptr, &bufferInfos[1], NULL);
 
 	vkUpdateDescriptorSets(vulkanApp->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }

@@ -229,6 +229,36 @@ public:
 private:
 };
 
+class BruteForceMaterial : public Material
+{
+public:
+
+	virtual ~BruteForceMaterial()
+	{
+		vkDestroyBuffer(vulkanApp->getDevice(), planeInfoBuffer, nullptr);
+		vkFreeMemory(vulkanApp->getDevice(), planeInfoBufferMem, nullptr);
+
+		Material::~Material();
+	}
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+	void createLocalBuffer();
+	void updatePlaneInfoPackBuffer(PlaneInfoPack &planeInfoPack);
+
+	VkBuffer planeInfoBuffer;
+private:
+
+
+	VkDeviceMemory planeInfoBufferMem;
+};
+
 
 class ScreenSpaceProjectionMaterial : public Material
 {
@@ -268,17 +298,50 @@ private:
 	
 };
 
+class ScreenSpaceProjectionMaterial2 : public Material
+{
+public:
+
+	virtual ~ScreenSpaceProjectionMaterial2()
+	{
+		vkDestroyBuffer(vulkanApp->getDevice(), planeInfoBuffer, nullptr);
+		vkFreeMemory(vulkanApp->getDevice(), planeInfoBufferMem, nullptr);
+
+		Material::~Material();
+	}
+
+	virtual void shutDown()
+	{
+		Material::shutDown();
+	}
+
+	void updatePlaneInfoPackBuffer(PlaneInfoPack &planeInfoPack);
+
+	virtual void createDescriptor(glm::vec2 screenOffsetParam, glm::vec4 sizeScaleParam);
+
+	virtual void createPipeline(std::string name, std::string albedo, std::string specular, std::string normal, std::string emissive, VkBuffer *objectBuffer, VkBuffer *cameraBuffer,
+		VkBuffer *pointLightBuffer, size_t numPointLight, VkBuffer *directionalLightBuffer, size_t numDirectionalLight, VkBuffer *perFrameBuffer,
+		glm::vec2 ScreenOffsets, glm::vec4 sizeScale, VkRenderPass renderPass, std::vector<Texture*> *renderTarget, Texture *pDepthImageView);
+
+	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
+
+	void createLocalBuffer();
+
+	VkBuffer planeInfoBuffer;
+private:
+
+
+	VkDeviceMemory planeInfoBufferMem;
+
+
+};
+
 class ScreenSpaceReflectionMaterial : public Material
 {
 public:
 	
 	virtual ~ScreenSpaceReflectionMaterial()
 	{
-		
-		//vkDestroyBuffer(vulkanApp->getDevice(), SSRInfoBuffer, nullptr);
-		//vkFreeMemory(vulkanApp->getDevice(), SSRInfoBufferMem, nullptr);
-		
-
 		Material::~Material();
 	}
 	
@@ -291,28 +354,7 @@ public:
 
 	virtual void updatePipeline(glm::vec2 screenOffsetParam, glm::vec4 sizeScalescreenOffsetParam, VkRenderPass renderPass);
 
-	/*
-	void createLocalBuffer()
-	{
-		VkDeviceSize bufferSize = sizeof(glm::vec4);
-		vulkanApp->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, SSRInfoBuffer, SSRInfoBufferMem);
-	}
-
-	void updateLocalBuffer(glm::vec4 *pBuffer)
-	{
-		VkDeviceSize bufferSize = sizeof(glm::vec4);
-
-		void* data;
-		vkMapMemory(vulkanApp->getDevice(), SSRInfoBufferMem, 0, bufferSize, 0, &data);
-		memcpy(data, pBuffer, static_cast<size_t>(bufferSize));
-		vkUnmapMemory(vulkanApp->getDevice(), SSRInfoBufferMem);
-	}
-	*/	
-
 private:
-
-	//VkBuffer SSRInfoBuffer;
-	//VkDeviceMemory SSRInfoBufferMem;
 };
 
 class SkyRenderingMaterial : public Material
@@ -344,6 +386,8 @@ public:
 
 private:
 };
+
+
 
 class HorizontalBlurMaterial : public Material
 {
