@@ -409,16 +409,16 @@ void Renderer::setGlobalObjs()
 		}
 		*/
 
-		
+		/*
 		//Chromie
 		{
 			Object *Chromie = new Object;
 			Chromie->initialize(vulkanApp, "Chromie", "Asset/Object/Chromie.obj", true);
 			Chromie->scale = glm::vec3(0.1f);
-			Chromie->position = glm::vec3(0.0f, 0.0f, 0.0f);
+			Chromie->position = glm::vec3(0.0f, -0.04f, 0.0f);
 			Chromie->updateOrbit(0.0f, 85.0f, 0.0);
 			Chromie->updateObjectBuffer();
-
+			Chromie->bRoll = true;
 			//Texture			
 			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_diff.tga");
 			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_spec.tga");
@@ -439,6 +439,38 @@ void Renderer::setGlobalObjs()
 			Chromie->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("Chromie"));
 
 			AssetDatabase::GetInstance()->objectManager.push_back(Chromie);
+		}
+		*/
+
+		//Lion
+		{
+			Object *Lion = new Object;
+			Lion->initialize(vulkanApp, "LionStatue", "Asset/Object/lionhh/lionhh.obj", true);
+			Lion->scale = glm::vec3(0.08f);
+			Lion->position = glm::vec3(0.0f, -0.1f, -0.5f);
+			Lion->updateOrbit(0.0f, 90.0f, 0.0);
+			Lion->updateObjectBuffer();
+			//Lion->bRoll = true;
+			//Texture			
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_albedo.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_specular.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Default_Normal.tga");
+			//AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.tga");
+
+			//Material
+			glm::vec2 screenOffsets = glm::vec2(0.0);
+			glm::vec4 sizeScale = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0, 1.0);
+
+			//Lion
+			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
+			temp_Gbuffer_Mat->createPipeline("LionStatue_Mat", "Asset/Texture/lionhh/lion_albedo.tga", "Asset/Texture/lionhh/lion_specular.tga",
+				"Asset/Texture/Default_Normal.tga", "Asset/Texture/sponza/no_emis.tga",
+				&Lion->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
+
+			Lion->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("LionStatue_Mat"));
+
+			AssetDatabase::GetInstance()->objectManager.push_back(Lion);
 		}
 		
 	}
@@ -634,6 +666,13 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 	mainCamera.setCamera(vulkanApp, mainCamera.position, mainCamera.focusPosition, mainCamera.upVector,  45.0f,
 		static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), NEAR_PLANE, FAR_PLANE);
 
+	
+	mainCamera.updateOrbit(90.0f, -3.0f, 0.0f);
+	//mainCamera.updatePosition(0.4f, 0.4f, 10.0f);
+	mainCamera.updatePosition(1.5f, 0.4f, 11.0f);
+	mainCamera.updateOrbit(15.0f, 0.0f, 0.0f);
+	
+
 	//FrustumCullingMaterial
 	{
 		FrustumCullingMaterial* frustumCulling_Mat = new FrustumCullingMaterial;
@@ -702,45 +741,94 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		postProcessChain.push_back(PBR_PP);
 	}
 
-	
-	//SSR material
+	PlaneInfoPack planeInfoPack;
+	planeInfoPack.numPlanes = 1;
+
+	planeInfoPack.planeInfo[0].centerPoint = glm::vec4(0.0, 0.0, 0.0, 0.0);
+	planeInfoPack.planeInfo[0].size = glm::vec4(100.0);
+
+	//planeInfoPack.planeInfo[0].centerPoint = glm::vec4(4.5, 0.0, -0.5, 0.0);
+	//planeInfoPack.planeInfo[0].size = glm::vec4(7.0, 1.5, 0.0, 0.0);
+
+	planeInfoPack.planeInfo[1].centerPoint = glm::vec4(4.5, 0.3, 1.0, 0.0);
+	planeInfoPack.planeInfo[1].size = glm::vec4(7.0, 1.5, 0.0, 0.0);
+
+	planeInfoPack.planeInfo[2].centerPoint = glm::vec4(4.5, 0.3, -2.0, 0.0);
+	planeInfoPack.planeInfo[2].size = glm::vec4(7.0, 1.5, 0.0, 0.0);
+
+	glm::mat4 basicMat;
+	basicMat[0] = glm::vec4(1.0, 0.0, 0.0, 0.0); //tan
+	basicMat[1] = glm::vec4(0.0, 1.0, 0.0, 0.0); //bitan
+	basicMat[2] = glm::vec4(0.0, 0.0, 1.0, 0.0); //normal
+	basicMat[3] = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+	planeInfoPack.planeInfo[0].rotMat = glm::rotate(basicMat, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+
+	planeInfoPack.planeInfo[1].rotMat = glm::rotate(basicMat, glm::radians(-110.0f), glm::vec3(1.0, 0.0, 0.0));
+
+	planeInfoPack.planeInfo[2].rotMat = glm::rotate(basicMat, glm::radians(-70.0f), glm::vec3(1.0, 0.0, 0.0));
+
+	createSSRInfoBuffer();
+
+	if (interface.bUseBruteForce)
 	{
+		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0, 1.0);
+
+		BruteForceMaterial * BR_Mat = new BruteForceMaterial;
+
+		PostProcess *BR_PP = new PostProcess(vulkanApp, "BR_mat", VK_FORMAT_R16G16B16A16_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
+
+		BR_PP->initialize(sizeScale);
+
+		//BR_Mat->addBuffer(&(BR_PP->planeInfoBuffer));
+		BR_Mat->addBuffer(&SSRInfoBuffer);
+
+		std::vector<Texture*> tempRenderTargets;
+
+		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]);  //Scene
+		//tempRenderTargets.push_back( gbuffers[NORMAL_COLOR]);  //world Normal
+
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.tga"));
+
+
+		BR_Mat->createPipeline("BR_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
+			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), NULL,
+			glm::vec2(0.0), BR_PP->sizeScale, BR_PP->getRenderPass(), &tempRenderTargets, depthTexture);
+		assignRenderpassID(BR_Mat, BR_PP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
+
+		BR_Mat->updatePlaneInfoPackBuffer(planeInfoPack);
+
+		BR_PP->recordCommandBuffer();
+
+		postProcessChain.push_back(BR_PP);
+
+	}
+	else //SSR material
+	{		
 		//for ReleaseMode
 		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0, 1.0);
 
 		//SSRP
 		ScreenSpaceProjectionMaterial* SSRP_Mat = new ScreenSpaceProjectionMaterial;
+		//ScreenSpaceProjectionMaterial2* SSRP_Mat = new ScreenSpaceProjectionMaterial2;
 
-		PostProcess *SSRP_PP = new PostProcess(vulkanApp, "ssrp_mat", VK_FORMAT_R32G32B32A32_SFLOAT, 1, singleTriangularVertexBuffer, VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_LINEAR, true, 0);
+		PostProcess *SSRP_PP = new PostProcess(vulkanApp, "ssrp_mat", VK_FORMAT_R32_UINT, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, true, 1);
+		//PostProcess *SSRP_PP = new PostProcess(vulkanApp, "ssrp_mat", VK_FORMAT_R8G8B8A8_UNORM, 1, singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
 
 		SSRP_PP->initialize(sizeScale);
-
-		createSSRBuffer();
-
-		//SSRP_Mat->addBuffer(&SSROffsetBuffer);
-		SSRP_Mat->addBuffer(&SSRDepthBuffer);
-
+		
 		std::vector<Texture*> tempSSRPRenderTargets;
 		tempSSRPRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //Scene image
+		tempSSRPRenderTargets.push_back(SSRP_PP->renderTargets[0]); //Scene image
 
+		
 		SSRP_Mat->createPipeline("ssrp_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL,
 			glm::vec2(0.0), sizeScale,
 			NULL, &tempSSRPRenderTargets, depthTexture);
 
-		assignRenderpassID(SSRP_Mat, NULL, static_cast<uint32_t>(postProcessChain.size()));
-
-		PlaneInfoPack planeInfoPack;
-		planeInfoPack.numPlanes = 1;
-		planeInfoPack.planeInfo[0].centerPoint = glm::vec4(0.0, 0.0, 0.0, 0.0);
-		planeInfoPack.planeInfo[0].size = glm::vec4(20.0);
-
-		glm::mat4 basicMat;
-		basicMat[0] = glm::vec4(1.0, 0.0, 0.0, 0.0); //tan
-		basicMat[1] = glm::vec4(0.0, 1.0, 0.0, 0.0); //bitan
-		basicMat[2] = glm::vec4(0.0, 0.0, 1.0, 0.0); //normal
-		basicMat[3] = glm::vec4(0.0, 0.0, 0.0, 1.0);
-
-		planeInfoPack.planeInfo[0].rotMat = glm::rotate(basicMat, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+		
 
 		SSRP_Mat->updatePlaneInfoPackBuffer(planeInfoPack);
 
@@ -750,7 +838,7 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 
 		//SSR
-		createSSRInfoBuffer();
+		
 
 		std::string noiseTex = "Asset/Texture/noise/SSR_Noise.tga";
 		AssetDatabase::GetInstance()->SaveTexture(noiseTex);
@@ -765,11 +853,11 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 		temp_ssr_Mat->addBuffer(&(SSRP_Mat->planeInfoBuffer));
 		temp_ssr_Mat->addBuffer(&SSRInfoBuffer);
-		temp_ssr_Mat->addBuffer(&SSRDepthBuffer);
 
 		std::vector<Texture*> tempRenderTargets;
 
 		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 2]->renderTargets[0]);  //Scene
+		tempRenderTargets.push_back(SSRP_PP->renderTargets[0]);  //Scene
 
 		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.tga"));
 		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.tga"));
@@ -787,29 +875,30 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 		SSR_PP->recordCommandBuffer();
 
-		postProcessChain.push_back(SSR_PP);
-	}
-
+		postProcessChain.push_back(SSR_PP);	
 	
-	//HolePatching
-	{
+		//HolePatching
 		HolePatchingMaterial * temp_hole_Mat = new HolePatchingMaterial;
 
 		PostProcess *HPP = new PostProcess(vulkanApp, "HolePatchingMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
 			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
 
 		//for ReleaseMode
-		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
+		//glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
 
 		HPP->initialize(sizeScale);
 
-		std::vector<Texture*> tempRenderTargets;
+		std::vector<Texture*> tempRenderTargets2;
 
-		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+		tempRenderTargets2.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+
+		temp_hole_Mat->addBuffer(&SSRInfoBuffer);
 
 		temp_hole_Mat->createPipeline("HolePatchingMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
 			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
-			glm::vec2(0.0), glm::vec4(HPP->getExtent().width, HPP->getExtent().height, 1.0, 1.0), HPP->getRenderPass(), &tempRenderTargets, NULL);
+			glm::vec2(0.0), glm::vec4(HPP->getExtent().width, HPP->getExtent().height, 1.0, 1.0), HPP->getRenderPass(), &tempRenderTargets2, NULL);
+
+		
 
 		assignRenderpassID(temp_hole_Mat, HPP->getRenderPass(), static_cast<uint32_t>(postProcessChain.size()));
 
@@ -817,6 +906,8 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 		postProcessChain.push_back(HPP);
 	}
+
+	
 	
 
 	/*
@@ -922,6 +1013,10 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		PostProcess *C_PP = new PostProcess(vulkanApp, "CompositePostProcessMat", VK_FORMAT_R16G16B16A16_SFLOAT, 1,
 			singleTriangularVertexBuffer, VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, false, 1);
 
+		createSSRBuffer();
+
+		temp_cpp_Mat->addBuffer(&SSRDepthBuffer);
+
 		//for ReleaseMode
 		glm::vec4 sizeScale = glm::vec4(static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 1.0f, 1.0f);
 
@@ -929,8 +1024,18 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 
 		std::vector<Texture*> tempRenderTargets;
 
-		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 4]->renderTargets[0]); //Scene
-		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+		if (interface.bUseBruteForce)
+		{
+			tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 2]->renderTargets[0]); //Scene
+			tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+		}
+		else
+		{
+			tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 4]->renderTargets[0]); //Scene
+			tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]); //SSR
+		}
+
+		
 
 		temp_cpp_Mat->createPipeline("CompositePostProcessMat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
 			&pointLightUniformBuffer, pointLightInfo.size(), &directionalLightUniformBuffer, directionalLightInfo.size(), &perFrameBuffer,
@@ -1048,34 +1153,17 @@ void Renderer::updateDirectionalLightBuffer()
 
 void Renderer::createSSRBuffer()
 {
-	//SSROforReset = new SSRDepthInfo[MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT];
-	
+	VkDeviceSize bufferSize = sizeof(uint32_t);
 
-	/*
-	VkDeviceSize bufferSize = sizeof(SSRDepthInfo) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
-
-	vulkanApp->createBuffer(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		SSROffsetBuffer, SSROffsetBufferMemory);
-	*/
-
-	SSRDforReset = new uint32_t[MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT];
-
-	VkDeviceSize bufferSize2 = sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
-
-	vulkanApp->createBuffer(bufferSize2, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	vulkanApp->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 		SSRDepthBuffer, SSRDepthBufferMemory);
-
 }
 
 void Renderer::updateSSRBuffer()
 {
-	VkDeviceSize bufferSize = sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT;
-	//vulkanApp->bufferMemoryBarrier(SSRDepthBuffer, bufferSize, VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_HOST_WRITE_BIT, vulkanApp->getTransferCmdPool(), vulkanApp->getTransferQueue());
+	VkDeviceSize bufferSize = sizeof(uint32_t);
 	
-	memset(SSRDforReset, UINT32_MAX, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);
-	vulkanApp->updateBuffer(SSRDforReset, SSRDepthBufferMemory, sizeof(uint32_t) * MAX_SCREEN_WIDTH* MAX_SCREEN_HEIGHT);	
-
-	//vulkanApp->bufferMemoryBarrier(SSRDepthBuffer, bufferSize, VK_ACCESS_HOST_WRITE_BIT, VK_ACCESS_SHADER_WRITE_BIT, vulkanApp->getTransferCmdPool(), vulkanApp->getTransferQueue());
+	vulkanApp->updateBuffer(&interface.SSRVisibility, SSRDepthBufferMemory, sizeof(uint32_t));
 }
 
 void Renderer::createSSRInfoBuffer()
@@ -1088,7 +1176,7 @@ void Renderer::createSSRInfoBuffer()
 
 void Renderer::updateSSRInfoBuffer()
 {
-	glm::vec4 tempSSRInfo = glm::vec4(interface.gRoughness, interface.gIntensity, 1.0, 1.0);
+	glm::vec4 tempSSRInfo = glm::vec4(interface.gRoughness, interface.gIntensity, interface.bUseNormalMap == true ? 1.0 : 0.0, interface.bUseHolePatching == true ? 1.0 : 0.0);
 	vulkanApp->updateBuffer(&tempSSRInfo, SSRInfoBufferMem, sizeof(glm::vec4));
 }
 
@@ -1137,7 +1225,7 @@ void Renderer::reInitializeRenderer()
 	mainCamera.shutDown();
 
 	//delete[] SSROforReset;
-	delete[] SSRDforReset;
+	//delete[] SSRDforReset;
 	
 	vkDestroyBuffer(vulkanApp->getDevice(), SSRDepthBuffer, nullptr);
 	vkFreeMemory(vulkanApp->getDevice(), SSRDepthBufferMemory, nullptr);
@@ -1236,7 +1324,7 @@ void Renderer::mainloop()
 {
 	unsigned int simulationTime = 0;
 
-	mainCamera.updateOrbit(0.0f, 0.0f, 0.0f);
+	//mainCamera.updateOrbit(0.0f, 0.0f, 0.0f);
 
 	while (!glfwWindowShouldClose(interface.getWindow()))
 	{
@@ -1270,6 +1358,7 @@ void Renderer::mainloop()
 
 		double sensitivity = 20.0;
 		double deltaTimeSec = deltaTime * 0.001;
+		double currentTimeSec = currentTime * 0.001;
 
 		if (interface.mouseDeltaX != 0.0 || interface.mouseDeltaY != 0.0 || interface.mouseDeltaZ != 0.0)
 		{
@@ -1313,17 +1402,42 @@ void Renderer::mainloop()
 			interface.bLeft = false;
 			interface.bRight = false;
 		}
+
+		if(interface.bRotate)
+		{
+			//interface.gRoughness = (glm::sin(currentTimeSec * 0.25f) + 1.f) * 0.3f;
+			mainCamera.updateOrbit(static_cast<float>( glm::sin(-currentTimeSec * 0.25f) * deltaTimeSec * 9.0f), 0.0f, 0.0f);
+		}
+
+		if (interface.bMoveForward)
+		{
+			mainCamera.updatePosition(0.0f, 0.0f, static_cast<float>(glm::sin(currentTimeSec * 0.5f) * deltaTimeSec * 2.0f));
+		}
 		
 		culling();
+
+		AssetDatabase* DBInstance = AssetDatabase::GetInstance();
+
+		for (size_t i = 0; i < DBInstance->objectManager.size(); i++)
+		{
+			Object *thisOBJ = DBInstance->objectManager[i];
+
+			if (thisOBJ->bRoll)
+			{
+				thisOBJ->updateOrbit(0.0f, deltaTime * 0.05f, 0.0f);
+				thisOBJ->updateObjectBuffer();
+			}
+		}
 
 		//update SkySystem
 		//skySystem.sun.updateOrbit(deltaTime * 0.05f, 0.0f, 0.0f);
 		skySystem.sun.lightInfo.direction = skySystem.sun.getViewVector4();
 		updateDirectionalLightBuffer();
 		
+		
 		updateSSRBuffer();
 		updateSSRInfoBuffer();
-
+		
 
 
 		updatePerFrameBuffer();
@@ -1691,7 +1805,7 @@ void Renderer::shutDown()
 	vkFreeMemory(vulkanApp->getDevice(), pointLightUniformMemory, nullptr);
 
 	//delete[] SSROforReset;
-	delete[] SSRDforReset;
+	//delete[] SSRDforReset;
 
 	vkDestroyBuffer(vulkanApp->getDevice(), SSRDepthBuffer, nullptr);
 	vkFreeMemory(vulkanApp->getDevice(), SSRDepthBufferMemory, nullptr);
@@ -1922,7 +2036,7 @@ void Renderer::createGbufferRenderPass()
 
 	std::vector<VkAttachmentDescription> attachments = {};
 	attachments.resize(NUM_GBUFFERS + 1);
-	attachments[BASIC_COLOR].format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	attachments[BASIC_COLOR].format = VK_FORMAT_R8G8B8A8_UNORM;
 	attachments[BASIC_COLOR].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[BASIC_COLOR].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[BASIC_COLOR].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -1931,7 +2045,7 @@ void Renderer::createGbufferRenderPass()
 	attachments[BASIC_COLOR].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[BASIC_COLOR].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	attachments[SPECULAR_COLOR].format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	attachments[SPECULAR_COLOR].format = VK_FORMAT_R8G8B8A8_UNORM;
 	attachments[SPECULAR_COLOR].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[SPECULAR_COLOR].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[SPECULAR_COLOR].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -1940,7 +2054,7 @@ void Renderer::createGbufferRenderPass()
 	attachments[SPECULAR_COLOR].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[SPECULAR_COLOR].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	attachments[NORMAL_COLOR].format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	attachments[NORMAL_COLOR].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	attachments[NORMAL_COLOR].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[NORMAL_COLOR].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[NORMAL_COLOR].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -1949,7 +2063,7 @@ void Renderer::createGbufferRenderPass()
 	attachments[NORMAL_COLOR].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[NORMAL_COLOR].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	attachments[EMISSIVE_COLOR].format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	attachments[EMISSIVE_COLOR].format = VK_FORMAT_R8G8B8A8_UNORM;
 	attachments[EMISSIVE_COLOR].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[EMISSIVE_COLOR].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[EMISSIVE_COLOR].storeOp = VK_ATTACHMENT_STORE_OP_STORE;

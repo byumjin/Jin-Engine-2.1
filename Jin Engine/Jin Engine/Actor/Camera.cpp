@@ -2,8 +2,8 @@
 
 Camera::Camera():focalDistance(10.0f)
 {
-	focusPosition = glm::vec3(-1.0f, 2.0f, 0.0f);
-	position = glm::vec3(5.0f, 2.0f, 0.0f);
+	focusPosition = glm::vec3(0.0f, 0.0f, -1.0f);
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
 	upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
@@ -29,6 +29,8 @@ void Camera::setCamera(Vulkan *pVulkanApp, glm::vec3 eyePositionParam, glm::vec3
 	viewPortSize = glm::vec4(width, height, 0.0, 0.0);
 
 	updateViewMatrix(glm::lookAtRH(position, focusPosition, upVector));
+
+	//modelMat = viewMat;
 
 	createCameraBuffer();
 
@@ -88,7 +90,7 @@ void Camera::updateOrbit(float deltaX, float deltaY, float deltaZ)
 	updateViewMatrix(glm::lookAtRH(position, focusPosition, upVector));
 	*/
 	updateViewMatrix(glm::inverse(modelMat));
-
+	//updateViewMatrix(modelMat);
 	updateViewProjectionMatrix();
 
 	updateCameraBuffer();

@@ -116,7 +116,8 @@ void main()
 	vec4 EmissiveMap = texture(emissiveGbuffer, fragUV);
 
 	float Roughness = SpecColorMap.w;
-	float energyConservation = 1.0f - Roughness;
+	Roughness = clamp(Roughness, 0.05, 0.95);
+	float energyConservation = 1.0f - Roughness * Roughness;
 	float Metallic = NormalMap.w;
 
 	//getPosition form Depth

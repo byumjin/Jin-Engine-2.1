@@ -1,16 +1,10 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define WORKGROUP_X_SIZE_MAX 32
-#define WORKGROUP_Y_SIZE_MAX 1
-#define WORKGROUP_Z_SIZE_MAX 1
-
 #define MAX_PLANES 4
 
 #define UINT_MAX 4294967295
 #define FLT_MAX  3.402823466e+38F
-
-layout(local_size_x = WORKGROUP_X_SIZE_MAX, local_size_y = WORKGROUP_Y_SIZE_MAX, local_size_z = WORKGROUP_Z_SIZE_MAX) in;
 
 layout(binding = 0) uniform sampler2D sceneMap;
 layout(binding = 1, r32ui) uniform uimage2D IntermediateBuffer;
@@ -26,7 +20,6 @@ layout(set = 0, binding = 3) uniform cameraBuffer
 	vec4 cameraWorldPos;
 	vec4 viewPortSize;
 };
-
 
 struct PlaneInfo
 {
@@ -51,7 +44,7 @@ float getDistance(vec3 planeNormal, vec3 planeCenter, vec3 worldPos)
 	return (dot(planeNormal, worldPos) + d) / length(planeNormal);
 }
 
-bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec3 hitPoint, out vec4 reflectedPos) 
+bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec4 reflectedPos) 
 { 
 	PlaneInfo thisPlane = planeInfo[index];
 
@@ -97,7 +90,7 @@ bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec3 hi
 			return false;
 		}
 
-		hitPoint = rO + rD*t;	
+		vec3 hitPoint = rO + rD*t;	
 
 		vec3 gap = hitPoint - centerPoint;
 		
@@ -207,8 +200,12 @@ uint packInfo(vec2 offset)
 	return  ( (YInt & 0x00000fff ) << 20) | ( (YFrac & 0x00000007) << 17) | ( (XInt & 0x00000fff) << 5) | ( (XFrac & 0x00000007 )<< 2) | CoordSys;
 }
 
+layout(location = 0) in vec2 fragUV;
+layout(location = 0) out vec4 outColor;
+
 void main() {
 	
+	/*
 	uint screenWidth = uint( viewPortSize.x );
 	uint screenHeight = uint( viewPortSize.y );
 	
@@ -221,6 +218,9 @@ void main() {
 	uint indexX = index - screenWidth * indexY;
 
 	vec2 fragUV = vec2(float(indexX) / (viewPortSize.x), float(indexY) / (viewPortSize.y) );
+	*/
+
+
 	float depth = texture(depthMap, fragUV).x;	
 
 	//if there is no obj
@@ -230,35 +230,20 @@ void main() {
 	vec4 worldPos = getWorldPosition(fragUV, depth);
 	
 	vec4 reflectedPos = vec4(0.0);
-	vec3 hitpoint;
-	ivec2 reflectedUV;
-	vec2 offset;
-
-	ivec2 tempreflectedUV;
-
-	float minDist = 1000000.0;
 	
-
 	uint relfectedPlanarIndex;
 	for(uint i = 0; i < numPlanes; i++)
 	{	
-		if(!intersectPlane( i, worldPos.xyz, fragUV, hitpoint, reflectedPos ))
+		if(!intersectPlane( i, worldPos.xyz, fragUV, reflectedPos ))
 		{
-			//continue;			
-		}
-		else
-		{
-			float localDist =  distance(hitpoint, cameraWorldPos.xyz);
-			if( localDist <  minDist )
-			{
-				minDist = localDist;
-				reflectedUV =  ivec2( reflectedPos.x * viewPortSize.x, reflectedPos.y * viewPortSize.y);
-				offset = vec2( (fragUV.x - reflectedPos.x) * viewPortSize.x, ( fragUV.y - reflectedPos.y) * viewPortSize.y);
-			}
+			return;			
 		}
 
 		relfectedPlanarIndex = i;
 	}
+
+	ivec2 reflectedUV =  ivec2( reflectedPos.x * viewPortSize.x, reflectedPos.y * viewPortSize.y);
+	vec2 offset = vec2( (fragUV.x - reflectedPos.x) * viewPortSize.x, ( fragUV.y - reflectedPos.y) * viewPortSize.y);
 		
 
 	//pack info

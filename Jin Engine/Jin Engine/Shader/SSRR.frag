@@ -14,12 +14,12 @@
 #define RADIAN 0.01745329251994329576923690768489
 
 layout(binding = 0) uniform sampler2D SceneTexture;
-
-layout(binding = 1) uniform sampler2D albedoMap;
-layout(binding = 2) uniform sampler2D specularMap;
-layout(binding = 3) uniform sampler2D normalMap;
-layout(binding = 4) uniform sampler2D NoiseMap;
-layout(binding = 5) uniform sampler2D depthMap;
+layout(binding = 1, r32ui) uniform uimage2D IntermediateBuffer;
+layout(binding = 2) uniform sampler2D albedoMap;
+layout(binding = 3) uniform sampler2D specularMap;
+layout(binding = 4) uniform sampler2D normalMap;
+layout(binding = 5) uniform sampler2D NoiseMap;
+layout(binding = 6) uniform sampler2D depthMap;
 
 struct PlaneInfo
 {
@@ -28,7 +28,7 @@ struct PlaneInfo
 	vec4 size;
 };
 
-layout(set = 0, binding = 6) uniform planeInfoBuffer
+layout(set = 0, binding = 7) uniform planeInfoBuffer
 {	
 	PlaneInfo planeInfo[MAX_PLANES];
 	uint numPlanes;
@@ -37,14 +37,9 @@ layout(set = 0, binding = 6) uniform planeInfoBuffer
 	uint pad02;
 };
 
-layout(set = 0, binding = 7) uniform SSRInfoBuffer
+layout(set = 0, binding = 8) uniform SSRInfoBuffer
 {
-	vec4 SSR_Info00; //x : global Roughness, y : Intensity, z : tiling X, w : tiling Y
-};
-
-layout(set = 0, binding = 8) buffer reflectDepth
-{
-	uint ssRdepth[];
+	vec4 SSRInfo; //x : global Roughness, y : Intensity, z : bUseNormalmap, w : holePatching
 };
 
 layout(set = 0, binding = 9) uniform cameraBuffer
@@ -59,8 +54,6 @@ layout(set = 0, binding = 9) uniform cameraBuffer
 };
 
 layout(location = 0) in vec2 fragUV;
-
-layout(location = 0) out vec4 outColor;
 
 mat2 rotationMat2(float angle)
 {
@@ -84,26 +77,12 @@ mat4 rotationMatrix(vec3 axis, float angle)
                 0.0,                                0.0,                                0.0,                                1.0);
 }
 
-float depthLinear(float depth)
-{	
-	float f = 1000.0;
-	float n = 0.1;
-	return (2.0 * n) / (f + n - depth * (f - n));
-}
-
 vec4 getWorldPosition(vec2 UV, float depth)
 {
 	vec4 worldPos = InvViewProjMat * vec4(UV * 2.0 - 1.0, depth, 1.0);
 	worldPos /= worldPos.w;
 
 	return worldPos;
-}
-
-float getDistance(vec3 planeNormal, vec3 planeCenter, vec3 worldPos)
-{
-	//plane to point
-	float d = -dot(planeNormal, planeCenter);
-	return (dot(planeNormal, worldPos) + d) / length(planeNormal);
 }
 
 bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec4 hitPos, out vec2 relfectedUVonPlanar) 
@@ -172,7 +151,7 @@ bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec4 hi
 			else
 			{
 				relfectedUVonPlanar = vec2(xGap / width, yGap / height) * 0.5 + vec2(0.5);
-				relfectedUVonPlanar *= thisPlane.size.zw;
+				relfectedUVonPlanar *= vec2(thisPlane.size.zw);
 
 				return true; 
 			}			
@@ -190,16 +169,19 @@ bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec4 hi
 
 vec3 getNormalVector(vec2 surfaceUV)
 {
-	return texture(normalMap, surfaceUV).xyz * 2.0 - vec3(1.0);
+	return normalize( texture(normalMap, surfaceUV).xyz * 2.0 - vec3(1.0) );
 }
 
 vec3 GGXDistribution_Sample_wh(vec2 xi, float roughness)
-{
+{	
     vec3 wh;
 	float phi = (2.0 * PI) * xi.y;
 	   
-    float tanTheta2 = roughness * roughness * xi.x / (1.0 - xi.x);
-    float cosTheta = 1.0 / sqrt(1.0 + tanTheta2);
+	float tanTheta2;
+	float cosTheta;
+
+    tanTheta2 = roughness * roughness * xi.x / (1.0 - xi.x);
+    cosTheta = 1.0 / sqrt(1.0 + tanTheta2);
    
     float sinTheta = sqrt(max(0.0, 1.0 - cosTheta * cosTheta));
 
@@ -208,29 +190,45 @@ vec3 GGXDistribution_Sample_wh(vec2 xi, float roughness)
 }
 
 //wo -> viewvector in tangentSpace
-vec3 ImportanceSampleGGX(vec3 worldNormal, vec3 worldView, vec2 xi, float roughness, mat3 rotationMat)
+vec3 ImportanceSampleGGX(vec3 normal, vec3 worldView, vec2 xi, float roughness, mat3 rotationMat)
 {
 	vec3 wh = normalize(GGXDistribution_Sample_wh(xi, roughness)); //tangent_Space
 
 	vec3 tangentNormal = vec3(0.0, 0.0, 1.0);
+
+	if(tangentNormal == normal || tangentNormal == -normal)
+	{
+		vec3 worldHalf = rotationMat * wh;	//tan - > world
+		worldHalf = normalize(worldHalf);
+
+		//world reflection Vector
+		return normalize(2.0 * dot(worldView, worldHalf)*worldHalf - worldView);
+	}
+	else
+	{
+		float dotValue = dot( vec3(0.0, 0.0, 1.0), normal);
 	
-	vec3 bitangentVec = cross(tangentNormal, worldNormal);
-	float angle = acos( dot(tangentNormal, worldNormal));
+		float angle = acos( dotValue );
+		
+		vec3 bitangentVec = normalize(cross(tangentNormal, normal));
+				
+		wh = mat3(rotationMatrix(bitangentVec, angle)) * wh;	
+		vec3 worldHalf = rotationMat * wh; //tan - > world
+		worldHalf = normalize(worldHalf);
 
-	vec3 worldHalf = mat3(rotationMatrix(bitangentVec, angle)) * wh;	
-	worldHalf = normalize(worldHalf);
-
-	//world reflection Vector
-    return normalize(2.0 * dot(worldView, worldHalf)*worldHalf - worldView);
+		//world reflection Vector
+		return normalize(2.0 * dot(worldView, worldHalf)*worldHalf - worldView);
+		
+	}
+	
 }
 
 vec4 getColorwithNormalMap(vec3 worldPos, vec3 normalVec, float roughness, vec3 reflectedWorldPos, mat3 rotationMat, vec2 Xi)
 {
-	//Approximation, not exact
-
-	vec3 NormalVec_WS = rotationMat * normalVec;
+	//Approximation, not exact	
+	
 	vec3 viewVec_WS =  normalize(cameraWorldPos.xyz - worldPos);
-	vec3 reflecVec_WS = ImportanceSampleGGX(NormalVec_WS, viewVec_WS, Xi, roughness, rotationMat );
+	vec3 reflecVec_WS = ImportanceSampleGGX(normalVec, viewVec_WS, Xi, roughness, rotationMat );
 	
 	float reflectedDistance = distance(reflectedWorldPos.xyz, worldPos);
 		
@@ -248,7 +246,7 @@ vec4 unPacked(in uint unpacedInfo, in vec2 dividedViewSize, out uint CoordSys)
 	
 	uint uXInt = (unpacedInfo & 0x00010000) >> 16;
 
-	float XInt =0.0;
+	float XInt = 0.0;
 
 	if(uXInt == 0)
 	{
@@ -271,42 +269,50 @@ vec4 unPacked(in uint unpacedInfo, in vec2 dividedViewSize, out uint CoordSys)
 	if(CoordSys == 0)
 	{
 		offset = vec2( (XInt) / dividedViewSize.x, (YInt)  / dividedViewSize.y);
+		//offset = vec2(XInt, YInt);
 	}
 	else if(CoordSys == 1)
 	{
 		offset = vec2( (YInt) / dividedViewSize.x, (XInt) / dividedViewSize.y);
+		//offset = vec2(0.0, 1.0);
 	}
 	else if(CoordSys == 2)
 	{
 		offset = vec2( (XInt) / dividedViewSize.x, -(YInt) / dividedViewSize.y);
+		//offset = vec2(0.5, 0.5);
 	}
 	else if(CoordSys == 3)
 	{
 		offset = vec2( -(YInt) / dividedViewSize.x, (XInt) / dividedViewSize.y);
+		//offset = vec2(1.0, 1.0);
 	}
 
 	return vec4(offset, Xfrac, Yfrac);
 }
 
 
-vec4 getColorwithNormal(vec3 worldPos, vec3 normalVec, float globalRoughness, vec3 reflectedWorldPos, mat3 rotMat, vec2 samples[4])
+vec4 getColorwithNormal(vec3 worldPos, vec3 normalVec, float globalRoughness, vec3 reflectedWorldPos, mat3 rotMat, vec2 samples[NUM_SAMPLE])
 {
+	
 #if NUM_SAMPLE 
 			vec4 getColor = vec4(0.0);
 
 			int validSampleCounter = 0;
 
+			
 			for(int i=0; i < NUM_SAMPLE; i++)
 			{
-				vec4 reflectedColor = getColorwithNormalMap(worldPos.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, mat3(planeInfo[0].rotMat), samples[i]);				
-				getColor += reflectedColor;
+				vec4 reflectedColor = getColorwithNormalMap(worldPos.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, rotMat, samples[i]);	
+				getColor += clamp(reflectedColor, 0.0, 1.0);				
 			}
 			
-			return getColor / NUM_SAMPLE;
-#else
-			return getColorwithNormalMap(worldPos.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, mat3(planeInfo[0].rotMat), samples[0]);
+			return getColor / float(NUM_SAMPLE);
+#else			
+			return getColorwithNormalMap(worldPos.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, rotMat, samples[0]);
+			
 #endif
 }
+
 
 float fade(vec2 UV)
 {
@@ -315,19 +321,59 @@ float fade(vec2 UV)
 	return clamp( 1.0 - max( pow( NDC.y * NDC.y, 4.0) , pow( NDC.x * NDC.x, 4.0)) , 0.0, 1.0); 
 }
 
+
+vec4 fetchColor(vec2 relfectedUV, vec2 UVforNormalMap, vec3 HitPos_WS, float Roughness, mat3 rotMat, vec2 samples[NUM_SAMPLE], bool bUseNormal)
+{
+	float reflectedDepth = texture(depthMap, relfectedUV).x;
+	vec4 reflectedWorldPos = getWorldPosition(relfectedUV, reflectedDepth);
+	vec3 normalVec;
+
+	if(bUseNormal)
+	{
+		normalVec = getNormalVector(UVforNormalMap);
+		return getColorwithNormal(HitPos_WS, normalVec, Roughness, reflectedWorldPos.xyz, rotMat, samples);
+	}
+	else
+	{
+		//return texture(SceneTexture,  relfectedUV);
+		
+
+		normalVec = vec3(0.0, 0.0, 1.0);
+		return getColorwithNormal(HitPos_WS, normalVec, Roughness, reflectedWorldPos.xyz, rotMat, samples);
+	}
+	
+}
+
+
+layout(location = 0) out vec4 outColor;
+
 void main()
 {
-	vec2 dividedViewSize = vec2(viewPortSize.x, viewPortSize.y);
+	outColor =  vec4(0.0);
 
-	ivec2 iUV = ivec2(fragUV.x * dividedViewSize.x, fragUV.y * dividedViewSize.y);
-
-	uint index = iUV.x + iUV.y * int(dividedViewSize.x);
+	ivec2 iUV = ivec2(fragUV.x * viewPortSize.x, fragUV.y * viewPortSize.y);
 	
-	uint bufferInfo = ssRdepth[index];
+	uint bufferInfo = imageAtomicAdd(IntermediateBuffer, iUV, 0);
+
+	bool bIsInterect = false;
+
+	/*
+	if(UINT_MAX > bufferInfo)
+	{
+		bIsInterect = true;
+	}
+	*/
 
 	uint CoordSys;
-	vec2 offset2 = unPacked(bufferInfo, dividedViewSize, CoordSys).xy;
+	vec2 offset = unPacked(bufferInfo, viewPortSize.xy, CoordSys).xy;
 	
+	
+	//offset = vec2(0.0);
+	//outColor = vec4(  abs(offset) * 2000.0, 1.0, 1.0);
+	
+	//return;
+	
+
 	float depth = texture(depthMap, fragUV).x;
 
 	vec4 worldPos = getWorldPosition(fragUV, depth);
@@ -335,83 +381,107 @@ void main()
 	vec4 HitPos_WS;
 	vec2 UVforNormalMap;
 
-	bool bIsInterect = false;
-	for(uint i = 0; i < numPlanes; i++)
-	{	
-		if(intersectPlane( i, worldPos.xyz, fragUV, HitPos_WS, UVforNormalMap))
-		{
-			bIsInterect = true;
-			break;		
+	
+	bool bUseNormal = false;// SSRInfo.z > 0.5 ? true : false;
+
+	//if(bUseNormal)
+	{
+		for(uint i = 0; i < numPlanes; i++)
+		{	
+			if(intersectPlane( i, worldPos.xyz, fragUV, HitPos_WS, UVforNormalMap))
+			{
+				bIsInterect = true;
+				break;		
+			}
+			else
+			{
+				UVforNormalMap = vec2(0.0);
+			}
 		}
 	}
+	
+
+	//outColor = vec4(UVforNormalMap, 0.0, 1.0);
+	//return;
 	
 	//If is not in the boundary of planar, exit
 	if(!bIsInterect)
 	{
-		outColor = vec4(0.0);
+		//clear IntermediateBuffer
+		imageAtomicMax(IntermediateBuffer, iUV, UINT_MAX);
 		return;
 	}
+
 	
-	outColor =  vec4(0.0, 0.0, 0.0, 1.0);
+	
 
-	bool bUseNormal = false;
-	bool bHolePatching = false;
+	vec4 noiseColor = texture(NoiseMap, (viewPortSize.xy / vec2(1024.0)) * fragUV);
+	vec2 Xi = fract(noiseColor.xy);
 
-	bool bValidReflection;
+	vec2 samples[NUM_SAMPLE];
 
-	vec4 noiseColor = texture(NoiseMap, (dividedViewSize / vec2(1024.0)) * fragUV);
-	vec2 Xi = noiseColor.xy;
+	float angleBias = noiseColor.z * 360 / float(NUM_SAMPLE);
+	vec2 midPoint =  vec2(0.5, 0.5);
 
-	vec2 samples[4];
+	for(int i = 0; i< NUM_SAMPLE; i++)
+	{
+		samples[i] = rotationMat2(angleBias * float(i) * RADIAN) * (Xi - midPoint) + midPoint;
+		samples[i] = fract(samples[i]);
+	}
+	/*
+	samples[1] = rotationMat2((angleBias + 90.0) * RADIAN) * (Xi - midPoint) + midPoint;
+	samples[2] = rotationMat2((angleBias + 180.0) * RADIAN) * (Xi - midPoint) + midPoint;
+	samples[3] = rotationMat2((angleBias + 270.0) * RADIAN) * (Xi - midPoint) + midPoint;
 
-	float angleBias = noiseColor.z * 90.0;
+	
+	samples[1] = fract(samples[1]);
+	samples[2] = fract(samples[2]);
+	samples[3] = fract(samples[3]);
+	*/
 
-	samples[0] = rotationMat2(angleBias * RADIAN) * (Xi - vec2(0.5, 0.5)) + vec2(0.5, 0.5);
-	samples[1] = rotationMat2((angleBias + 90.0) * RADIAN) * (Xi - vec2(0.5, 0.5)) + vec2(0.5, 0.5);
-	samples[2] = rotationMat2((angleBias + 180.0) * RADIAN) * (Xi - vec2(0.5, 0.5)) + vec2(0.5, 0.5);
-	samples[3] = rotationMat2((angleBias + 270.0) * RADIAN) * (Xi - vec2(0.5, 0.5)) + vec2(0.5, 0.5);
+	
 
 	//UV_tiling!!!
-	UVforNormalMap *= 0.5;
-
+	//UVforNormalMap *= 0.4;// SSRInfo.w;
 	
-	float globalRoughness = SSR_Info00.x;
+	float roughness = texture(specularMap, UVforNormalMap).w;
+
+	float globalRoughness = SSRInfo.x;
 	globalRoughness = globalRoughness * globalRoughness;
 	globalRoughness *= 0.25;
 
-	float Intensity = SSR_Info00.y;
+	float Intensity = SSRInfo.y;
+	vec2 relfectedUV = fragUV + offset.xy;
 
-	vec2 relfectedUV = fragUV + offset2.xy;
+	float offsetLen = FLT_MAX;
 
 	if(bufferInfo < UINT_MAX)
-	{
-		float roughness = texture(specularMap, UVforNormalMap).w;
+	{		
+		//values correction
+		float correctionPixel = 2.0;
 
-		if(bUseNormal)
-		{
-			vec3 normalVec = getNormalVector(UVforNormalMap);
-			float reflectedDepth = texture(depthMap, relfectedUV).x;
-			vec4 reflectedWorldPos = getWorldPosition(relfectedUV, reflectedDepth);
+		if(CoordSys == 0)
+			relfectedUV = relfectedUV.xy + vec2(0.0, correctionPixel/viewPortSize.y);
+		else if(CoordSys == 1)
+			relfectedUV = relfectedUV.xy + vec2(correctionPixel/viewPortSize.x, 0.0);
+		else if(CoordSys == 2)
+			relfectedUV = relfectedUV.xy - vec2(0.0, correctionPixel/viewPortSize.y);
+		else if(CoordSys == 3)
+			relfectedUV = relfectedUV.xy - vec2(correctionPixel/viewPortSize.x, 0.0);
 
-			outColor = getColorwithNormal(HitPos_WS.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, mat3(planeInfo[0].rotMat), samples);
-
-		}
-		else
-		{
-			//outColor = texture(SceneTexture, relfectedUV);
-
-			vec3 normalVec = vec3(0.0, 0.0, 1.0);
-
-			float reflectedDepth = texture(depthMap, relfectedUV).x;
-			vec4 reflectedWorldPos = getWorldPosition(relfectedUV, reflectedDepth);
-
-			outColor = getColorwithNormal(HitPos_WS.xyz, normalVec, globalRoughness, reflectedWorldPos.xyz, mat3(planeInfo[0].rotMat), samples);
-		}
+		offsetLen = length(offset.xy);
+	
+		outColor = fetchColor(relfectedUV, UVforNormalMap, HitPos_WS.xyz, globalRoughness, mat3(planeInfo[0].rotMat), samples, bUseNormal);
+		
 
 		outColor *= fade(relfectedUV);
 		outColor *= Intensity;
-		outColor.w = 1.0;
+		outColor.w = offsetLen;
+
 	}	
 	else
-		outColor = vec4(0.0, 0.0, 0.0, 2.0);
+		outColor.w = FLT_MAX;
+		
+	//clear IntermediateBuffer
+	imageAtomicMax(IntermediateBuffer, iUV, UINT_MAX);
 }

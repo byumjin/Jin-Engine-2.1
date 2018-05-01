@@ -2,12 +2,22 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(binding = 0) uniform sampler2D SceneTexture;
-layout(binding = 1) uniform sampler2D SpecularGbuffer;
-layout(binding = 2) uniform sampler2D NormalGbuffer;
 
-layout(binding = 3) uniform sampler2D noiseTex;
+layout(binding = 1) uniform sampler2D albedoMap;
+layout(binding = 2) uniform sampler2D specularMap;
+layout(binding = 3) uniform sampler2D normalMap;
 
-layout(set = 0, binding = 4) uniform cameraBuffer
+layout(binding = 4) uniform sampler2D depthTexture;
+
+#define MAX_PLANES 4
+
+layout(set = 0, binding = 5) uniform SSRInfoBuffer
+{
+	vec4 SSRInfo; //x : global Roughness, y : Intensity, z : bUseNormalmap, w : holePatching
+};
+
+
+layout(set = 0, binding = 6) uniform cameraBuffer
 {
 	mat4 viewMat;
 	mat4 projMat;
@@ -18,54 +28,23 @@ layout(set = 0, binding = 4) uniform cameraBuffer
 	vec4 viewPortSize;
 };
 
-layout(binding = 5) uniform sampler2D DepthMipTexture0;
-layout(binding = 6) uniform sampler2D DepthMipTexture1;
-layout(binding = 7) uniform sampler2D DepthMipTexture2;
-layout(binding = 8) uniform sampler2D DepthMipTexture3;
-layout(binding = 9) uniform sampler2D DepthMipTexture4;
-layout(binding = 10) uniform sampler2D DepthMipTexture5;
-layout(binding = 11) uniform sampler2D DepthMipTexture6;
-layout(binding = 12) uniform sampler2D DepthMipTexture7;
-
-float getDepthFromMipmap(int level, vec2 UV)
+struct PlaneInfo
 {
-	float depth;
-	switch(level)
-	{
-		case 0: depth = texture(DepthMipTexture0, UV).x;
-		break;
+	mat4 rotMat;
+	vec4 centerPoint;
+	vec4 size;
+};
 
-		case 1: depth = texture(DepthMipTexture1, UV).x;
-		break;
-
-		case 2: depth = texture(DepthMipTexture2, UV).x;
-		break;
-
-		case 3: depth = texture(DepthMipTexture3, UV).x;
-		break;
-
-		case 4: depth = texture(DepthMipTexture4, UV).x;
-		break;
-
-		case 5: depth = texture(DepthMipTexture5, UV).x;
-		break;
-
-		case 6: depth = texture(DepthMipTexture6, UV).x;
-		break;
-
-		case 7: depth = texture(DepthMipTexture7, UV).x;
-		break;
-
-		default: depth = 1.0;
-		break;
-	}
-
-	return depth;
-}
-
+layout(set = 0, binding = 7) uniform planeInfoBuffer
+{	
+	PlaneInfo planeInfo[MAX_PLANES];
+	uint numPlanes;
+	uint pad00;
+	uint pad01;
+	uint pad02;
+};
 
 layout(location = 0) in vec2 fragUV;
-
 layout(location = 0) out vec4 outColor;
 
 
@@ -85,296 +64,338 @@ vec4 getWorldPosition(vec2 UV, float depth)
 	return worldPos;
 }
 
-vec3 intersectDepthPlane(vec3 o, vec3 d, float t)
+float fade(vec2 UV)
 {
-	return o + d * t;
+	vec2 NDC = vec2(UV.x * 2.0 - 1.0,  UV.y * 2.0 - 1.0);
+
+	return clamp( 1.0 - max( pow( NDC.y * NDC.y, 4.0) , pow( NDC.x * NDC.x, 4.0)) , 0.0, 1.0); 
 }
 
-vec2 getCell(vec2 ray, vec2 cellCount)
+float getDistance(vec3 planeNormal, vec3 planeCenter, vec3 worldPos)
 {
-	// does this need to be floor, or does it need fractional part - i think cells are meant to be whole pixel values (integer values) but not sure
-	return floor(ray * cellCount);
+	//plane to point
+	float d = -dot(planeNormal, planeCenter);
+	return (dot(planeNormal, worldPos) + d) / length(planeNormal);
 }
 
-vec3 intersectCellBoundary(vec3 o, vec3 d, vec2 cellIndex, vec2 cellCount, vec2 crossStep, vec2 crossOffset)
+vec3 getNormalVector(vec2 surfaceUV)
 {
-	vec2 index = cellIndex + crossStep;
-	index /= cellCount;
-	index += crossOffset;
-	vec2 delta = index - o.xy;
-	delta /= d.xy;
-	float t = min(delta.x, delta.y);
-	return intersectDepthPlane(o, d, t);
+	return normalize( texture(normalMap, surfaceUV).xyz * 2.0 - vec3(1.0) );
 }
 
-float getMinimumDepthPlane(vec2 uv, float level)
-{
-	// not sure why we need rootLevel for this
-	return getDepthFromMipmap(int(level), uv);
-}
+bool intersectPlane(in uint index, in vec3 worldPos, in vec2 fragUV, out vec3 normalVec, out vec4 hitPos, out vec2 relfectedUVonPlanar, bool bUseNormalMap) 
+{ 
+	PlaneInfo thisPlane = planeInfo[index];
 
-vec2 getCellCount(float level)
-{
-	vec2 div = vec2(pow(2.0,level));
-	return viewPortSize.xy / div;
-}
-
-bool crossedCellBoundary(vec2 cellIdxOne, vec2 cellIdxTwo)
-{
-	return int(cellIdxOne.x) != int(cellIdxTwo.x) || int(cellIdxOne.y) != int(cellIdxTwo.y);
-}
-
-vec3 getClosetCell(vec3 o, vec2 index, vec3 dir, vec2 sign, vec2 cellCount, float level)
-{
-	vec2 transedIndex = index;
+	// assuming vectors are all normalized
+	//vec3 normalVec;	
+	normalVec = thisPlane.rotMat[2].xyz;
 	
-	if(sign.x > 0.0)
-		transedIndex.x = ceil(transedIndex.x);
-	else
-		transedIndex.x = floor(transedIndex.x);
+	vec3 centerPoint = thisPlane.centerPoint.xyz;
 
-	if(sign.y > 0.0)
-		transedIndex.y = ceil(transedIndex.y);
-	else
-		transedIndex.y = floor(transedIndex.y);
+	vec3 rO = cameraWorldPos.xyz;
+	vec3 rD = normalize(worldPos - rO);
 
-	float pixelGap = pow(2.0, level);
+	vec3 rD_VS = mat3(viewMat) * rD;
 
-
-	if(transedIndex.x == index.x)
-	{
-		if(sign.x > 0.0)
-			transedIndex.x += pixelGap;
-		else
-			transedIndex.x -= pixelGap;
-	}
-
-	if(transedIndex.y == index.y)
-	{
-		if(sign.y > 0.0)
-			transedIndex.y += pixelGap;
-		else
-			transedIndex.y -= pixelGap;
-	}
-
-	float slope;
-
-	float X1;
-	float Y1;
-
-	float X2;
-	float Y2;
-
-	X1 = index.x;
-	Y1 = index.y;
-
-	X2 = transedIndex.x;
-	Y2 = transedIndex.y;
-
-	float newX2;	
-	float newY2;
-
-	vec2 gap;
-
-	if(dir.x != 0.0 && dir.y != 0.0)
-	{
-		slope = dir.y / dir.x;
-
-		newX2 = (Y2 - Y1) / slope + X1;	
-		newY2 = slope * (X2 - X1) + Y1;
-
-		gap.x = distance(vec2(newX2, Y2), index);
-		gap.y = distance(vec2(X2, newY2), index);
-	}
-	else if(dir.x == 0.0)
-	{
-		newY2 = Y2;
-		newX2 = X2 = X1;
-
-		gap.y = abs(Y2 - Y1);
-		gap.x = 1024.0;
-	}
-	else if(dir.y == 0.0)
-	{
-		newX2 = X2;
-		newY2 = Y1;
-
-		gap.x = abs(X2 - X1);
-		gap.y = 1024.0;
-	}
-
-	float t;
-	vec2 delta;
-
-	if( gap.x < gap.y )
-	{
-		transedIndex = vec2(X2, newY2);
-
-		delta.x = transedIndex.x/cellCount.x - o.x;
-		delta.x /= dir.x;
-
-		t = delta.x;
-	}
-	else
-	{
-		transedIndex = vec2(newX2, Y2);
-
-		delta.y = transedIndex.y/cellCount.y - o.y;
-		delta.y /= dir.y;
-
-		t = delta.y;
-	}
-
-	return vec3(transedIndex/cellCount, t);
-	//return intersectDepthPlane(o, dir, t);
-}
-
-
-vec3 hiZTraceV(vec3 Pss, vec3 D)
-{
-	return vec3(0.0);
-}
-
-
-vec3 hiZTrace(vec3 Pss, vec3 D)
-{
-	//xy is in ScreenSpace
-	vec3 o = intersectDepthPlane(Pss, D, -Pss.z);
-
-	vec2 sign = vec2(D.x >= 0.0 ? 1.0 : -1.0, D.y >= 0.0 ? 1.0 : -1.0);
-
-	float level = 0.0;
-
-	uint iterations = 0u;
-	uint max = 64;
-
-	vec3 ray = Pss;
 	
-	vec2 offset = 1.0 / (8.0 * viewPortSize.xy) * sign;
+	if(rD_VS.z > 0.0)
+	{
+		return false;
+	}
+	
 
-	while(level >= 0.0 && iterations < max)
-	{		
-		vec2 cellCount = getCellCount(level);		
-		vec2 cellIndex = ray.xy * cellCount;
+    float denom = dot(normalVec, rD); 
 
-		vec2 oldCellIndex = getCell(ray.xy , cellCount);
+    if (denom < 0.0)
+	{ 
+        vec3 p0l0 = centerPoint - rO; 
+        float t = dot(normalVec, p0l0) / denom; 
 
-		ray = getClosetCell(o, cellIndex, D, sign, cellCount, level);		
-
-		if(ray.x > 1.0 || ray.x < 0.0 || ray.y > 1.0 || ray.y < 0.0 )
+		if(t <= 0.0)
 		{
-			iterations = max;
-			break;
+			return false;
 		}
 
-		vec2 newCellIndex = getCell(ray.xy + offset, cellCount);
+		vec3 hitPoint = rO + rD*t;	
 
-		if(oldCellIndex == newCellIndex)
-		{	
-			return vec3(-2.0);
-			//level -= 1.0;
-		}		
+		vec3 gap = hitPoint - centerPoint;
+		
+		float xGap = dot(gap, thisPlane.rotMat[0].xyz);
+		float yGap = dot(gap, thisPlane.rotMat[1].xyz);
 
-		float depth = getMinimumDepthPlane(ray.xy, level);
+		float width = thisPlane.size.x * 0.5;
+		float height = thisPlane.size.y * 0.5;
 
-		if(ray.z > depth)
-		//if(ray.z > depthLinear(depth))
+		vec4 reflectedPos;
+
+		if( (abs(xGap) <= width) && (abs(yGap) <= height))
 		{
-			break;
+			hitPos = vec4(hitPoint, 1.0);
+			reflectedPos = viewProjMat * hitPos;
+			reflectedPos /= reflectedPos.w;
+
+			reflectedPos.xy = (reflectedPos.xy + vec2(1.0)) * 0.5;
+
+			float depth = texture(depthTexture, reflectedPos.xy).x;	
+
+			if(depth <= reflectedPos.z)
+				return false;
+			
+			if( reflectedPos.x < 0.0 || reflectedPos.y < 0.0  || reflectedPos.x > 1.0 || reflectedPos.y > 1.0 )
+			{
+				return false;
+			}
+			else
+			{
+				relfectedUVonPlanar = vec2(xGap / width, yGap / height) * 0.5 + vec2(0.5);
+				relfectedUVonPlanar *= vec2(thisPlane.size.zw);
+
+				if(bUseNormalMap)
+				{
+					normalVec =  mat3(thisPlane.rotMat) * getNormalVector(relfectedUVonPlanar);
+				}
+
+				return true; 
+			}			
+		}	
+		else
+		{
+			return false;
 		}
-
-		iterations++;
-	}
-
-	if(iterations == max)
-		return vec3(-1.0);
+    } 
 	else
-		return ray;
-}
-
+	{
+		return false; 
+	}
+} 
 
 void main()
-{
-	float depth = getDepthFromMipmap(0, fragUV);
-
+{	
+	float depth = texture(depthTexture, fragUV).r;
+	
 	if(depth >= 1.0)
 	{
 		outColor = vec4(0.0, 0.0, 0.0, 0.0);
 		return;
 	}
 
-	outColor = clamp( texture( SceneTexture, fragUV), 0.0, 1.0);
-	return;
-
-	float linearDepth = depthLinear(depth);
-
-	
-
-	//get WorldPosition
 	vec4 worldPos = getWorldPosition(fragUV, depth);
-	vec3 viewVec = normalize( cameraWorldPos.xyz - worldPos.xyz); 
-	vec3 normalVec = texture(NormalGbuffer, fragUV).xyz;
-	vec3 relfecVec =  normalize(reflect(-viewVec ,normalVec ));
-
-	vec4 Pos_SS = viewProjMat * vec4(worldPos.xyz + relfecVec, 1.0);
-	Pos_SS /= Pos_SS.w;
-	Pos_SS.xy = (Pos_SS.xy + vec2(1.0)) * 0.5;
 
 	
 
+	vec3 currentPos = worldPos.xyz;
+	vec3 prevPos = currentPos;
+	vec4 reflectionColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+	float threshold = 2.0;
 	
-	vec3 viewVec_VS = vec3(viewMat * vec4(-viewVec, 0.0));
+	float prevDepth;
+	float prevDepthFromDepthBuffer;
 
+	bool bHit = false;
+	float fadeFactor = 0.0;
 
-	// PVS
-	//vec3 positionVS = viewVec_VS * linearDepth;
-
-	vec4 worldPos_VS = viewMat * worldPos;
-	vec4 cameraPos_VS = viewMat * cameraWorldPos;
-
-	vec3 toPositionVS = normalize(worldPos_VS.xyz);
+	//float maxStep = 2048.0;
+	//float stepSize = 0.1;
 	
+	float maxStep = 128.0;
+	float stepSize = 1.0;
+	
+	float Intensity = 1.0;
 
-	vec3 normalVec_VS = normalize(vec3(viewMat * vec4(normalVec, 0.0)));
-	//vec3 relfecVec_VS =  normalize(reflect( toPositionVS, normalVec_VS ));
-	vec3 relfecVec_VS = normalize(vec3(viewMat * vec4(relfecVec, 0.0)));
+	bool bIsInterect = false;
+	bool bUseInterpolation = SSRInfo.w > 0.5 ? true : false;
 
-	//forward to camera 
-	if(relfecVec_VS.z >= 0.0)
+	uint relfectedPlanarIndex;
+	vec4 hitpoint;
+	vec2 UVforNormalMap;
+	vec3 WorldNormal;
+
+	bool bUseNormalMap = SSRInfo.z > 0.5 ? true : false;
+
+	for(uint i = 0; i < numPlanes; i++)
+	{	
+		if(!intersectPlane( i, worldPos.xyz, fragUV, WorldNormal, hitpoint, UVforNormalMap, bUseNormalMap))
+		{
+			//continue;			
+		}
+		else
+		{
+			bIsInterect = true;
+			break;
+			/*
+			float localDist =  distance(hitpoint, cameraWorldPos.xyz);
+			
+			if( localDist <  minDist )
+			{
+				minDist = localDist;
+			}
+			*/
+		}
+
+		relfectedPlanarIndex = i;
+	}
+
+	//bIsInterect = true;
+
+	UVforNormalMap *= 0.4;// SSRInfo.w;
+
+	if(!bIsInterect)
 	{
-		outColor = vec4( 0.0, 0.0, 0.0, 0.0);
+		outColor = vec4(0.0, 0.0, 0.0, 0.0);
 		return;
-	}	
-
-	vec4 positionPrimeSS4 = projMat * vec4(worldPos_VS.xyz + relfecVec_VS, 1.0);
-	positionPrimeSS4 /= positionPrimeSS4.w;
-
-	vec3 positionPrimeSS = positionPrimeSS4.xyz;
-
-	positionPrimeSS4.xy = (positionPrimeSS4.xy + vec2(1.0)) * 0.5;
-	//positionPrimeSS4.z = depthLinear(positionPrimeSS4.z);
-
-
-	vec3 Pss_ori = vec3( fragUV , depth);
-
-	vec3 Vss = positionPrimeSS4.xyz - Pss_ori.xyz;
+	}
 
 	
+	
+	//if(bUseNormalMap)
+	//	WorldNormal = getNormalVector(UVforNormalMap);
+	
 
-	vec3 D = Vss / Vss.z;
+	vec3 viewVec = normalize(worldPos.xyz - cameraWorldPos.xyz);
+	vec3 relfectVec = reflect(viewVec , WorldNormal);
 
-	//outColor =  texture( SceneTexture, D.xy);   clamp( vec4( D.x,D.y,0.0, 0.0), 0.0, 1.0);
-	//	return;
+
+	//rayMarching
+	for(float i = 0.0; i < maxStep; i++ )
+	{			
+		currentPos += relfectVec * stepSize;
+
+		vec4 pos_SS = viewProjMat * vec4(currentPos, 1.0);
+		pos_SS /= pos_SS.w;
+		vec2 screenSpaceCoords = vec2((pos_SS.x + 1.0) * 0.5, (pos_SS.y + 1.0 )*0.5);
+
 		
-	vec3 result = hiZTrace(Pss_ori, D);
-	
-	outColor = vec4(result.xy, 0.0, 1.0);
-	return;
 
-	if(result.x == -1.0)
-		outColor = vec4(0.0);
-	else if(result.x == -2.0)
-		outColor = vec4(1.0, 0.0, 1.0, 1.0);
-	else
-		outColor = clamp( texture( SceneTexture, result.xy), 0.0, 1.0);
+		if(screenSpaceCoords.x > 1.0 || screenSpaceCoords.x < 0.0 || screenSpaceCoords.y > 1.0 || screenSpaceCoords.y < 0.0 || pos_SS.z >= 1.0)
+		{
+			fadeFactor = 0.0;
+			//bHit = true;
+
+			//outColor = vec4(0.0, 1.0, 0.0, 0.0);
+			//return;
+			break;
+		}
+		
+		float depth_SS = texture(depthTexture, screenSpaceCoords).r;
+
+		
+
+		
+		if(pos_SS.z > depth_SS)
+		{				
+			float currentLinearDepth = depthLinear(depth_SS);
+			vec4 cworldPos = getWorldPosition( screenSpaceCoords, depth_SS);
+
+
+			float currentIndicatedLinearDepth = depthLinear(pos_SS.z);
+
+			if( distance(cworldPos.xyz, currentPos) < stepSize * threshold)
+			{
+				
+
+				float prevIndicatedLinearDepth = depthLinear(prevDepth);
+				float prevLinearDepth = depthLinear(prevDepthFromDepthBuffer);
+				
+				float denom = ( (currentLinearDepth - prevLinearDepth) - (currentIndicatedLinearDepth - prevIndicatedLinearDepth) );
+
+				if(denom == 0.0)
+				{
+					reflectionColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+					fadeFactor = 0.0;
+					bHit = true;
+					//outColor = vec4(1.0, 0.0, 0.0, 0.0);
+					//return;
+					break;
+				}
+
+				float lerpVal = (prevIndicatedLinearDepth - prevLinearDepth) / denom;
+				
+
+				//exception
+				if(i < 0.5)
+					lerpVal = 1.0;
+
+				vec3 lerpedPos;
+
+				if(bUseInterpolation)
+				{
+					lerpedPos = prevPos + relfectVec * stepSize * lerpVal;
+				}
+				else
+				{
+					lerpedPos = currentPos;
+				}
+
+				//lerpedPos = prevPos.xyz;
+
+				vec4 lerpedPos_SS =  viewProjMat * vec4(lerpedPos, 1.0);
+				lerpedPos_SS /= lerpedPos_SS.w;
+				
+				vec2 lerpedScreenSpaceCoords = vec2((lerpedPos_SS.x + 1.0) * 0.5, (lerpedPos_SS.y + 1.0) * 0.5);
+
+				//out of screen
+				if(lerpedScreenSpaceCoords.x > 1.0 || lerpedScreenSpaceCoords.x < 0.0 || lerpedScreenSpaceCoords.y > 1.0 || lerpedScreenSpaceCoords.y < 0.0 || lerpedPos_SS.z >= 1.0)
+				{
+					reflectionColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+					fadeFactor = 0.0;
+					bHit = true;
+					//outColor = vec4(0.0, 0.0, 1.0, 0.0);
+					//return;
+					break;
+				}
+
+				//reflection with backface
+				/*
+				if( dot(relfectVec, texture(u_Gbuffer_Specular, lerpedScreenSpaceCoords).xyz) > 0.0 || dot(relfectVec, -viewVec ) > 0.0 )
+				{					
+
+					reflectionColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+					fadeFactor = 0.0;
+					bHit = true;
+					break;
+				}
+				*/
+				reflectionColor = texture(SceneTexture, lerpedScreenSpaceCoords);
+
+				fadeFactor = 1.0;// fade(lerpedScreenSpaceCoords);
+				fadeFactor = min(pow(1.0 -  (i + 1.0)/maxStep, 0.05), fadeFactor);
+				bHit = true;
+
+				break;
+			}
+			/*
+			else
+			{
+				fadeFactor = 0.0;
+				bHit = true;
+				break;
+			}
+			*/
+		}
+
+		prevDepthFromDepthBuffer = depth_SS;
+		prevDepth = pos_SS.z;
+		prevPos = currentPos;
+
+	}
+ 	
+
+	fadeFactor = fadeFactor * fadeFactor;
+
+	//We are not going to make inner pool scene. Thus, this is fine
+	
+
+	//float energyConservation = 1.0 - roughness * roughness;
+
+	outColor = reflectionColor * Intensity;// * energyConservation;
+	outColor.xyz = mix(vec3(0.0), outColor.xyz, fadeFactor);
+	outColor = clamp(outColor, 0.0, 1.0);
+
+	outColor.w = 1.0; //SSR_Mask
+	
 }

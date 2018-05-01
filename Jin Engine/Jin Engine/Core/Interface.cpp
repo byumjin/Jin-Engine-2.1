@@ -80,6 +80,77 @@ static void keyboardCallback(GLFWwindow* window, int key, int scancode, int acti
 		{
 			interface->changeWindowMode();
 		}
+
+		if (key == GLFW_KEY_0)
+		{
+			interface->bUseBruteForce = !interface->bUseBruteForce;
+		}
+
+		if (key == GLFW_KEY_4)
+		{
+			interface->bUseInterpolation = !interface->bUseInterpolation;
+		}
+
+		if (key == GLFW_KEY_1)
+		{
+			interface->bUseNormalMap = !interface->bUseNormalMap;
+		}
+
+		if (key == GLFW_KEY_2)
+		{
+			interface->SSRVisibility = (interface->SSRVisibility + 1) % 3;
+		}
+
+		if (key == GLFW_KEY_3)
+		{
+			interface->bUseHolePatching = !interface->bUseHolePatching;
+		}
+
+		if (key == GLFW_KEY_R)
+		{
+			interface->bRotate = !interface->bRotate;
+		}
+
+		if (key == GLFW_KEY_F)
+		{
+			interface->bMoveForward = !interface->bMoveForward;
+		}
+
+		//Roughness
+		if (key == GLFW_KEY_LEFT_BRACKET)
+		{
+			interface->gRoughness -= 0.1f;
+
+			if (interface->gRoughness < 0.0f)
+				interface->gRoughness = 0.0f;
+
+		}
+
+		if (key == GLFW_KEY_RIGHT_BRACKET)
+		{
+			interface->gRoughness += 0.1f;
+
+			if (interface->gRoughness > 1.0f)
+				interface->gRoughness = 1.0f;
+		}
+
+		//Intensity
+		if (key == GLFW_KEY_COMMA)
+		{
+			interface->gIntensity -= 0.1f;
+
+			if (interface->gIntensity < 0.0f)
+				interface->gIntensity = 0.0f;
+
+		}
+
+		if (key == GLFW_KEY_PERIOD)
+		{
+			interface->gIntensity += 0.1f;
+
+			if (interface->gIntensity > 1.0f)
+				interface->gIntensity = 1.0f;
+		}
 	}
 }
 
@@ -126,42 +197,6 @@ void Interface::getAsynckeyState()
 	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
 		bRight = true;
-	}
-
-	//Roughness
-	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET))
-	{
-		gRoughness -= 0.01f;
-
-		if (gRoughness < 0.01f)
-			gRoughness = 0.01f;
-
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET))
-	{
-		gRoughness += 0.01f;
-
-		if (gRoughness > 1.0f)
-			gRoughness = 1.0f;
-	}
-
-	//Intensity
-	if (glfwGetKey(window, GLFW_KEY_COMMA))
-	{
-		gIntensity -= 0.01f;
-
-		if (gIntensity < 0.00f)
-			gIntensity = 0.00f;
-
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_PERIOD))
-	{
-		gIntensity += 0.01f;
-
-		if (gIntensity > 2.0f)
-			gIntensity = 2.0f;
 	}
 }
 

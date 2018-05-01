@@ -281,7 +281,7 @@ private:
 	//VkBuffer SSROffsetBuffer;
 	//VkDeviceMemory SSROffsetBufferMemory;
 
-	uint32_t *SSRDforReset;
+	//uint32_t *SSRDforReset;
 	VkBuffer SSRDepthBuffer;	
 	VkDeviceMemory SSRDepthBufferMemory;
 

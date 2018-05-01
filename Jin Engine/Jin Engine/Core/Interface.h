@@ -33,7 +33,15 @@ public:
 
 		//SSR
 		gRoughness = 0.0f;
-		gIntensity = 0.4f;
+		gIntensity = 0.3f;
+
+		bRotate = false;
+		bUseNormalMap = false;
+		bUseHolePatching = true;
+		SSRVisibility = 0;
+		bUseBruteForce = false;
+		bUseInterpolation = false;
+		bMoveForward = false;
 
 	}
 
@@ -57,7 +65,7 @@ public:
 	}
 
 	void getAsynckeyState();
-	
+		
 	int fps;
 	int fpstracker;
 
@@ -82,9 +90,18 @@ public:
 
 	bool windowResetFlag;
 
+	bool bRotate;
+	bool bMoveForward;
+
 	//SSR
 	float gRoughness;
 	float gIntensity;
+	bool bUseNormalMap;
+	bool bUseHolePatching;
+	bool bUseBruteForce;
+	bool bUseInterpolation;
+
+	int SSRVisibility;
 
 private:
 	GLFWwindow* window;

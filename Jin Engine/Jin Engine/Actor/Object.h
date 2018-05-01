@@ -64,12 +64,12 @@ public:
 	VkDeviceMemory uniformObjectBufferMemory;
 
 	BoundingBox AABB;
-
+	bool bRoll;
 private:
 
 	
 
-	bool bRoll;
+	
 	bool UflipCorrection;
 
 	float rollSpeed;
