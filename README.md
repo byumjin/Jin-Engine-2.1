@@ -8,8 +8,8 @@
 
 ## UI
 
-WASD : Move position of camera
-Mouse : Move angle of camera
-Num 2 : Change Rednering Mode
-[ , ] : Change Roughness of Reflector -/+
-< , > : Change Intensity of SSR -/+
+- WASD : Move position of camera
+- Mouse : Move angle of camera
+- Num 2 : Change Rednering Mode
+- [ , ] : Change Roughness of Reflector -/+
+- < , > : Change Intensity of SSR -/+
