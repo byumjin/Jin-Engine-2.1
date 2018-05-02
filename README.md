@@ -6,6 +6,9 @@
 |---|
 |![](imgs/main.png)|
 
+- Visual Studio 2017 is required to build
+- Please build this as Release version
+
 ## UI
 
 - WASD : Move position of camera
