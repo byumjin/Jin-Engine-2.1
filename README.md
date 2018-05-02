@@ -7,7 +7,8 @@
 |![](imgs/main.png)|
 
 - Visual Studio 2017 is required to build
-- Please build this as Release version
+- [Vulkan SDK](https://vulkan.lunarg.com/) is required to build
+- Please build this as Release Version
 
 ## UI
 
