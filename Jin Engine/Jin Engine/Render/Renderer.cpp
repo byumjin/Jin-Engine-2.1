@@ -109,113 +109,113 @@ void Renderer::setGlobalObjs()
 
 			//Texture
 			//arch
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/arch/arch_norm.png");
 
 			//bricks
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/bricks/bricks_norm.png");
 
 			//celing
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/ceiling/ceiling_norm.png");
 
 			//column
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_a_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_b_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/column/column_c_norm.png");
 
 			//curtain
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.png");
 
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_green_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_red_spec.png");
 
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/curtain/sponza_curtain_norm.png");
 
 			//detail
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/detail/detail_norm.png");
 
 			//fabric
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_blue_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_blue_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_green_albedo.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_blue_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_blue_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_green_albedo.png");
 
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_green_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_red_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_red_spec.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_green_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_red_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_red_spec.png");
 
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/fabric/fabric_norm.png");
 
 			//flagpole
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/flagpole/flagpole_norm.png");
 
 			//floor
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/floor/floor_norm.png");
 
 			//lion
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_spec.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion/lion_spec.png");
 
 			//lion_back
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/lion_background/lion_background_norm.png");
 
 			//plant
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_emiss.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/plant/vase_plant_emiss.png");
 
 			//roof
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/roof/roof_norm.png");
 
 			//thorn
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_emis.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/thorn/sponza_thorn_emis.png");
 
 			//vase
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase/vase_norm.png");
 
 			//vase others
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/vase_hanging/vase_round_norm.png");
 
 			//chain
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_albedo.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_norm.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_albedo.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/chain/chain_norm.png");
 
 			//no Emissive
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.png");
 
 
 			//Material
@@ -225,122 +225,122 @@ void Renderer::setGlobalObjs()
 
 			//arch
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("arch", "Asset/Texture/sponza/arch/arch_albedo.tga", "Asset/Texture/sponza/arch/arch_spec.tga", "Asset/Texture/sponza/arch/arch_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("arch", "Asset/Texture/sponza/arch/arch_albedo.png", "Asset/Texture/sponza/arch/arch_spec.png", "Asset/Texture/sponza/arch/arch_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//bricks
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.tga", "Asset/Texture/sponza/bricks/bricks_spec.tga", "Asset/Texture/sponza/bricks/bricks_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("bricks", "Asset/Texture/sponza/bricks/bricks_albedo.png", "Asset/Texture/sponza/bricks/bricks_spec.png", "Asset/Texture/sponza/bricks/bricks_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//ceiling
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.tga", "Asset/Texture/sponza/ceiling/ceiling_spec.tga", "Asset/Texture/sponza/ceiling/ceiling_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("ceiling", "Asset/Texture/sponza/ceiling/ceiling_albedo.png", "Asset/Texture/sponza/ceiling/ceiling_spec.png", "Asset/Texture/sponza/ceiling/ceiling_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//chain
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.tga", "Asset/Texture/sponza/chain/chain_spec.tga", "Asset/Texture/sponza/chain/chain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("chain", "Asset/Texture/sponza/chain/chain_albedo.png", "Asset/Texture/sponza/chain/chain_spec.png", "Asset/Texture/sponza/chain/chain_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_a
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.tga", "Asset/Texture/sponza/column/column_a_spec.tga", "Asset/Texture/sponza/column/column_a_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_a", "Asset/Texture/sponza/column/column_a_albedo.png", "Asset/Texture/sponza/column/column_a_spec.png", "Asset/Texture/sponza/column/column_a_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_b
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.tga", "Asset/Texture/sponza/column/column_b_spec.tga", "Asset/Texture/sponza/column/column_b_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_b", "Asset/Texture/sponza/column/column_b_albedo.png", "Asset/Texture/sponza/column/column_b_spec.png", "Asset/Texture/sponza/column/column_b_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//column_c
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.tga", "Asset/Texture/sponza/column/column_c_spec.tga", "Asset/Texture/sponza/column/column_c_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("column_c", "Asset/Texture/sponza/column/column_c_albedo.png", "Asset/Texture/sponza/column/column_c_spec.png", "Asset/Texture/sponza/column/column_c_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_blue", "Asset/Texture/sponza/curtain/sponza_curtain_blue_albedo.png", "Asset/Texture/sponza/curtain/sponza_curtain_blue_spec.png", "Asset/Texture/sponza/curtain/sponza_curtain_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_green", "Asset/Texture/sponza/curtain/sponza_curtain_green_albedo.png", "Asset/Texture/sponza/curtain/sponza_curtain_green_spec.png", "Asset/Texture/sponza/curtain/sponza_curtain_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//curtain_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.tga", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.tga", "Asset/Texture/sponza/curtain/sponza_curtain_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("curtain_red", "Asset/Texture/sponza/curtain/sponza_curtain_red_albedo.png", "Asset/Texture/sponza/curtain/sponza_curtain_red_spec.png", "Asset/Texture/sponza/curtain/sponza_curtain_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//detail
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.tga", "Asset/Texture/sponza/detail/detail_spec.tga", "Asset/Texture/sponza/detail/detail_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("detail", "Asset/Texture/sponza/detail/detail_albedo.png", "Asset/Texture/sponza/detail/detail_spec.png", "Asset/Texture/sponza/detail/detail_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_blue
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.tga", "Asset/Texture/sponza/fabric/fabric_blue_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_blue", "Asset/Texture/sponza/fabric/fabric_blue_albedo.png", "Asset/Texture/sponza/fabric/fabric_blue_spec.png", "Asset/Texture/sponza/fabric/fabric_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_green
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.tga", "Asset/Texture/sponza/fabric/fabric_green_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_green", "Asset/Texture/sponza/fabric/fabric_green_albedo.png", "Asset/Texture/sponza/fabric/fabric_green_spec.png", "Asset/Texture/sponza/fabric/fabric_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//fabric_red
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.tga", "Asset/Texture/sponza/fabric/fabric_red_spec.tga", "Asset/Texture/sponza/fabric/fabric_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("fabric_red", "Asset/Texture/sponza/fabric/fabric_red_albedo.png", "Asset/Texture/sponza/fabric/fabric_red_spec.png", "Asset/Texture/sponza/fabric/fabric_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//flagpole
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.tga", "Asset/Texture/sponza/flagpole/flagpole_spec.tga", "Asset/Texture/sponza/flagpole/flagpole_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("flagpole", "Asset/Texture/sponza/flagpole/flagpole_albedo.png", "Asset/Texture/sponza/flagpole/flagpole_spec.png", "Asset/Texture/sponza/flagpole/flagpole_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//floor
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.tga", "Asset/Texture/sponza/floor/floor_spec.tga", "Asset/Texture/sponza/floor/floor_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("floor", "Asset/Texture/sponza/floor/floor_albedo.png", "Asset/Texture/sponza/floor/floor_spec.png", "Asset/Texture/sponza/floor/floor_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.tga", "Asset/Texture/sponza/lion/lion_spec.tga", "Asset/Texture/sponza/lion/lion_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion", "Asset/Texture/sponza/lion/lion_albedo.png", "Asset/Texture/sponza/lion/lion_spec.png", "Asset/Texture/sponza/lion/lion_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//lion_back
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.tga", "Asset/Texture/sponza/lion_background/lion_background_spec.tga", "Asset/Texture/sponza/lion_background/lion_background_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("lion_back", "Asset/Texture/sponza/lion_background/lion_background_albedo.png", "Asset/Texture/sponza/lion_background/lion_background_spec.png", "Asset/Texture/sponza/lion_background/lion_background_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//plant
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.tga", "Asset/Texture/sponza/plant/vase_plant_spec.tga", "Asset/Texture/sponza/plant/vase_plant_norm.tga", "Asset/Texture/sponza/plant/vase_plant_emiss.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("plant", "Asset/Texture/sponza/plant/vase_plant_albedo.png", "Asset/Texture/sponza/plant/vase_plant_spec.png", "Asset/Texture/sponza/plant/vase_plant_norm.png", "Asset/Texture/sponza/plant/vase_plant_emiss.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//roof
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.tga", "Asset/Texture/sponza/roof/roof_spec.tga", "Asset/Texture/sponza/roof/roof_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("roof", "Asset/Texture/sponza/roof/roof_albedo.png", "Asset/Texture/sponza/roof/roof_spec.png", "Asset/Texture/sponza/roof/roof_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//thorn
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.tga", "Asset/Texture/sponza/thorn/sponza_thorn_spec.tga", "Asset/Texture/sponza/thorn/sponza_thorn_norm.tga", "Asset/Texture/sponza/thorn/sponza_thorn_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("thorn", "Asset/Texture/sponza/thorn/sponza_thorn_albedo.png", "Asset/Texture/sponza/thorn/sponza_thorn_spec.png", "Asset/Texture/sponza/thorn/sponza_thorn_norm.png", "Asset/Texture/sponza/thorn/sponza_thorn_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.tga", "Asset/Texture/sponza/vase/vase_spec.tga", "Asset/Texture/sponza/vase/vase_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase", "Asset/Texture/sponza/vase/vase_albedo.png", "Asset/Texture/sponza/vase/vase_spec.png", "Asset/Texture/sponza/vase/vase_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_hanging
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_hanging", "Asset/Texture/sponza/vase_hanging/vase_hanging_albedo.png", "Asset/Texture/sponza/vase_hanging/vase_round_spec.png", "Asset/Texture/sponza/vase_hanging/vase_round_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			//vase_round
 			temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.tga", "Asset/Texture/sponza/vase_hanging/vase_round_spec.tga", "Asset/Texture/sponza/vase_hanging/vase_round_norm.tga", "Asset/Texture/sponza/no_emis.tga", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
+			temp_Gbuffer_Mat->createPipeline("vase_round", "Asset/Texture/sponza/vase_hanging/vase_round_albedo.png", "Asset/Texture/sponza/vase_hanging/vase_round_spec.png", "Asset/Texture/sponza/vase_hanging/vase_round_norm.png", "Asset/Texture/sponza/no_emis.png", &sponza->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
 			sponza->materials.push_back(AssetDatabase::GetInstance()->FindAsset<Material>("curtain_red")); //missing 1
@@ -386,10 +386,10 @@ void Renderer::setGlobalObjs()
 			cerberus->updateObjectBuffer();
 
 			//Texture			
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_A.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_E.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_N.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_S.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_A.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_E.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_N.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Cerberus/Cerberus_S.png");
 
 
 			//Material
@@ -398,8 +398,8 @@ void Renderer::setGlobalObjs()
 
 			//Cerberus
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("Cerberus", "Asset/Texture/Cerberus/Cerberus_A.tga", "Asset/Texture/Cerberus/Cerberus_S.tga",
-				"Asset/Texture/Cerberus/Cerberus_N.tga", "Asset/Texture/Cerberus/Cerberus_E.tga",
+			temp_Gbuffer_Mat->createPipeline("Cerberus", "Asset/Texture/Cerberus/Cerberus_A.png", "Asset/Texture/Cerberus/Cerberus_S.png",
+				"Asset/Texture/Cerberus/Cerberus_N.png", "Asset/Texture/Cerberus/Cerberus_E.png",
 				&cerberus->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
@@ -420,10 +420,10 @@ void Renderer::setGlobalObjs()
 			Chromie->updateObjectBuffer();
 			Chromie->bRoll = true;
 			//Texture			
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_diff.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_spec.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_norm.tga");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_emis.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_diff.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_spec.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_norm.png");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/storm_hero_chromie_ultimate_emis.png");
 
 			//Material
 			glm::vec2 screenOffsets = glm::vec2(0.0);
@@ -431,8 +431,8 @@ void Renderer::setGlobalObjs()
 
 			//Chromie
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
-			temp_Gbuffer_Mat->createPipeline("Chromie", "Asset/Texture/storm_hero_chromie_ultimate_diff.tga", "Asset/Texture/storm_hero_chromie_ultimate_spec.tga",
-				"Asset/Texture/storm_hero_chromie_ultimate_norm.tga", "Asset/Texture/storm_hero_chromie_ultimate_emis.tga",
+			temp_Gbuffer_Mat->createPipeline("Chromie", "Asset/Texture/storm_hero_chromie_ultimate_diff.png", "Asset/Texture/storm_hero_chromie_ultimate_spec.png",
+				"Asset/Texture/storm_hero_chromie_ultimate_norm.png", "Asset/Texture/storm_hero_chromie_ultimate_emis.png",
 				&Chromie->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
@@ -454,8 +454,8 @@ void Renderer::setGlobalObjs()
 			//Texture			
 			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_albedo.png");
 			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/lionhh/lion_specular.png");
-			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Default_Normal.tga");
-			//AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.tga");
+			AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/Default_Normal.png");
+			//AssetDatabase::GetInstance()->SaveTexture("Asset/Texture/sponza/no_emis.png");
 
 			//Material
 			glm::vec2 screenOffsets = glm::vec2(0.0);
@@ -464,7 +464,7 @@ void Renderer::setGlobalObjs()
 			//Lion
 			GbufferMaterial* temp_Gbuffer_Mat = new GbufferMaterial;
 			temp_Gbuffer_Mat->createPipeline("LionStatue_Mat", "Asset/Texture/lionhh/lion_albedo.png", "Asset/Texture/lionhh/lion_specular.png",
-				"Asset/Texture/Default_Normal.tga", "Asset/Texture/sponza/no_emis.tga",
+				"Asset/Texture/Default_Normal.png", "Asset/Texture/sponza/no_emis.png",
 				&Lion->uniformObjectBuffer, &mainCamera.uniformCameraBuffer, NULL, pointLightInfo.size(), NULL, directionalLightInfo.size(), NULL, screenOffsets, sizeScale, gbufferRenderPass, NULL, NULL);
 			assignRenderpassID(temp_Gbuffer_Mat, gbufferRenderPass);
 
@@ -788,9 +788,9 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 1]->renderTargets[0]);  //Scene
 		//tempRenderTargets.push_back( gbuffers[NORMAL_COLOR]);  //world Normal
 
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.tga"));
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.tga"));
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.png"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.png"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.png"));
 
 
 		BR_Mat->createPipeline("BR_mat", "", "", "", "", NULL, &mainCamera.uniformCameraBuffer,
@@ -840,7 +840,7 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		//SSR
 		
 
-		std::string noiseTex = "Asset/Texture/noise/SSR_Noise.tga";
+		std::string noiseTex = "Asset/Texture/noise/SSR_Noise.png";
 		AssetDatabase::GetInstance()->SaveTexture(noiseTex);
 
 		ScreenSpaceReflectionMaterial* temp_ssr_Mat = new ScreenSpaceReflectionMaterial;
@@ -859,9 +859,9 @@ void Renderer::initialize(Vulkan* pVulkanApp)
 		tempRenderTargets.push_back(postProcessChain[postProcessChain.size() - 2]->renderTargets[0]);  //Scene
 		tempRenderTargets.push_back(SSRP_PP->renderTargets[0]);  //Scene
 
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.tga"));
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.tga"));
-		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.tga"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_albedo.png"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_spec.png"));
+		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>("Asset/Texture/sponza/floor/floor_norm.png"));
 		tempRenderTargets.push_back(AssetDatabase::GetInstance()->LoadAsset<Texture>(noiseTex));
 
 

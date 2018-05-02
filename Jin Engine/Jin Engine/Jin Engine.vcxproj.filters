@@ -200,10 +200,8 @@
     <CustomBuild Include="Shader\verticalBlur.frag">
       <Filter>Source Files\Shader</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\holePatching.frag">
+    <CustomBuild Include="Shader\holePatching.frag">
       <Filter>Source Files\Shader</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>
